@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RH124 – Complete Study Guide, Cheatsheet & Topic Tracker</title>
+<style>
+  :root {
+    --red: #CC0000;
+    --dark: #1a1a2e;
+    --card: #ffffff;
+    --bg: #f4f6f9;
+    --border: #dde3ee;
+    --green: #1a7f3c;
+    --yellow: #b45309;
+    --blue: #1d4ed8;
+    --tag-bg: #fff0f0;
+    --tag-border: #ffc0c0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: #222; font-size: 14px; }
+
+/* ── Header ── */
+header { background: linear-gradient(135deg, #CC0000 0%, #7b0000 100%); color: #fff; padding: 28px 40px 22px; }
+header h1 { font-size: 28px; font-weight: 800; letter-spacing: 1px; }
+header p { margin-top: 6px; opacity: .85; font-size: 13px; }
+.badges { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.badge { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.35); border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 600; }
+
+/* ── Nav Tabs ── */
+.tabs { display: flex; background: #fff; border-bottom: 2px solid var(–border); padding: 0 40px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.tab-btn { padding: 14px 22px; font-size: 13px; font-weight: 600; border: none; background: none; cursor: pointer; color: #666; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; }
+.tab-btn:hover { color: var(–red); }
+.tab-btn.active { color: var(–red); border-bottom-color: var(–red); }
+
+/* ── Panels ── */
+.panel { display: none; padding: 30px 40px 60px; }
+.panel.active { display: block; }
+
+/* ── Section headers ── */
+.section-title { font-size: 18px; font-weight: 800; color: var(–dark); border-left: 4px solid var(–red); padding-left: 12px; margin: 30px 0 14px; }
+.section-title:first-of-type { margin-top: 0; }
+
+/* ── Note Cards ── */
+.note-card { background: var(–card); border: 1px solid var(–border); border-radius: 10px; margin-bottom: 18px; overflow: hidden; }
+.note-card-header { background: #f8f9fc; border-bottom: 1px solid var(–border); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+.note-card-header h3 { font-size: 14px; font-weight: 700; color: var(–dark); }
+.priority { font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 12px; }
+.p-critical { background: #fee2e2; color: #991b1b; }
+.p-high { background: #fef3c7; color: #92400e; }
+.p-medium { background: #dbeafe; color: #1e40af; }
+.note-card-body { padding: 16px 18px; }
+.note-card-body p { line-height: 1.7; margin-bottom: 8px; color: #333; }
+.note-card-body ul { padding-left: 20px; margin-bottom: 8px; }
+.note-card-body li { line-height: 1.8; color: #333; }
+
+/* ── Code blocks ── */
+pre { background: #1e1e2e; color: #cdd6f4; border-radius: 8px; padding: 14px 16px; font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 10px 0; font-family: ‘Courier New’, monospace; }
+.cmd { color: #89dceb; }
+.comment { color: #6c7086; }
+.flag { color: #fab387; }
+.val { color: #a6e3a1; }
+code { background: #f1f3f8; border: 1px solid var(–border); border-radius: 4px; padding: 1px 6px; font-size: 12px; font-family: ‘Courier New’, monospace; color: #c0392b; }
+
+/* ── Cheatsheet Table ── */
+.cheat-table { width: 100%; border-collapse: collapse; background: var(–card); border-radius: 10px; overflow: hidden; border: 1px solid var(–border); margin-bottom: 24px; font-size: 12.5px; }
+.cheat-table thead th { background: var(–dark); color: #fff; padding: 10px 14px; text-align: left; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+.cheat-table tbody tr:nth-child(even) { background: #f8f9fc; }
+.cheat-table tbody tr:hover { background: #eef1f8; }
+.cheat-table td { padding: 9px 14px; border-bottom: 1px solid var(–border); vertical-align: top; line-height: 1.6; }
+.cheat-table td code { background: #1e1e2e; color: #89dceb; border: none; padding: 2px 8px; display: inline-block; }
+.cat-label { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; }
+.cat-files { background: #dbeafe; color: #1e40af; }
+.cat-users { background: #dcfce7; color: #166534; }
+.cat-perms { background: #fef9c3; color: #713f12; }
+.cat-proc { background: #fce7f3; color: #831843; }
+.cat-net { background: #f0fdf4; color: #14532d; border: 1px solid #bbf7d0; }
+.cat-storage { background: #fff7ed; color: #7c2d12; }
+.cat-service { background: #f5f3ff; color: #4c1d95; }
+.cat-log { background: #fef2f2; color: #7f1d1d; }
+.cat-pack { background: #ecfdf5; color: #064e3b; }
+.cat-shell { background: #f0f9ff; color: #0c4a6e; }
+
+/* ── Topic Tracker ── */
+.tracker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 30px; }
+.tracker-card { background: var(–card); border: 1px solid var(–border); border-radius: 10px; padding: 16px 18px; }
+.tracker-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.tracker-card h4 span.num { background: var(–dark); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; }
+.topic-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px dashed #eee; }
+.topic-item:last-child { border-bottom: none; }
+.topic-item input[type=checkbox] { width: 16px; height: 16px; accent-color: var(–red); cursor: pointer; flex-shrink: 0; }
+.topic-item label { font-size: 13px; cursor: pointer; flex: 1; }
+.progress-bar-wrap { margin-top: 10px; }
+.progress-bar-bg { background: #eee; border-radius: 999px; height: 7px; overflow: hidden; }
+.progress-bar-fill { background: linear-gradient(90deg, var(–red), #ff6b6b); height: 100%; border-radius: 999px; transition: width .4s; }
+.progress-label { font-size: 11px; color: #888; margin-top: 4px; text-align: right; }
+.overall-progress { background: linear-gradient(135deg, var(–dark), #16213e); color: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
+.overall-progress h3 { font-size: 15px; margin-bottom: 12px; }
+.big-pct { font-size: 40px; font-weight: 900; color: #ff6b6b; }
+.overall-bar-bg { background: rgba(255,255,255,.15); border-radius: 999px; height: 10px; margin-top: 12px; overflow: hidden; }
+.overall-bar-fill { background: linear-gradient(90deg, #ff6b6b, #fbbf24); height: 100%; border-radius: 999px; transition: width .4s; }
+#overall-pct-text { font-size: 13px; opacity: .7; margin-top: 6px; }
+.reset-btn { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); color: #fff; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 12px; }
+.reset-btn:hover { background: rgba(255,255,255,.25); }
+
+/* ── Tips box ── */
+.tip-box { background: #fff8e6; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
+.tip-box strong { color: #b45309; }
+.warn-box { background: #fff0f0; border-left: 4px solid #CC0000; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
+.warn-box strong { color: #CC0000; }
+
+/* ── Print ── */
+@media print {
+.tabs { display: none; }
+.panel { display: block !important; page-break-before: always; }
+.panel:first-of-type { page-break-before: avoid; }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <h1>📘 RH124 – Red Hat System Administration I</h1>
+  <p>Complete Study Notes · Master Command Cheatsheet · Topic Progress Tracker</p>
+  <div class="badges">
+    <span class="badge">🎯 EX200 Prep</span>
+    <span class="badge">📋 RH124 Full Coverage</span>
+    <span class="badge">⌨️ Hands-On Commands</span>
+    <span class="badge">✅ Progress Tracker</span>
+  </div>
+</header>
+
+<!-- TABS -->
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('notes')">📖 Study Notes</button>
+  <button class="tab-btn" onclick="showTab('cheatsheet')">⌨️ Master Cheatsheet</button>
+  <button class="tab-btn" onclick="showTab('tracker')">✅ Topic Tracker</button>
+</div>
+
+<!-- ============================= NOTES PANEL ============================= -->
+
+<div id="notes" class="panel active">
+
+  <!-- 1. ACCESSING THE CLI -->
+
+  <div class="section-title">1. Accessing the Command Line</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🖥️ Virtual Consoles & TTYs</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <p>Linux provides multiple <strong>virtual consoles</strong> (TTYs). You can switch between them using <code>Ctrl+Alt+F1</code> through <code>Ctrl+Alt+F6</code>. The graphical desktop (if present) typically runs on <code>tty1</code> or <code>tty2</code>.</p>
+      <ul>
+        <li><strong>tty1–tty6</strong> = text-based logins (virtual consoles)</li>
+        <li><strong>pts/0, pts/1…</strong> = pseudo-terminals (SSH sessions, terminal emulators)</li>
+        <li>Check your current terminal: <code>tty</code></li>
+        <li>Check logged-in users: <code>w</code> or <code>who</code></li>
+      </ul>
+      <pre><span class="cmd">Ctrl+Alt+F2</span>  <span class="comment"># Switch to virtual console 2</span>
+<span class="cmd">chvt 3</span>        <span class="comment"># Switch to virtual console 3 as root</span>
+<span class="cmd">tty</span>           <span class="comment"># Show current terminal device</span></pre>
+    </div>
+  </div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🔤 Shell Basics & Special Characters</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <p>The default shell in RHEL is <strong>bash (Bourne Again Shell)</strong>. Understanding metacharacters is essential.</p>
+      <ul>
+        <li><code>#</code> – Comment (anything after is ignored)</li>
+        <li><code>\</code> – Escape next character / line continuation</li>
+        <li><code>|</code> – Pipe: send output of one command to another</li>
+        <li><code>&gt;</code> <code>&gt;&gt;</code> – Redirect output (overwrite / append)</li>
+        <li><code>2&gt;</code> – Redirect stderr; <code>&amp;&gt;</code> – redirect stdout+stderr</li>
+        <li><code>$(cmd)</code> or <code>`cmd`</code> – Command substitution</li>
+        <li><code>;</code> – Run commands sequentially</li>
+        <li><code>&amp;&amp;</code> – Run next only if previous succeeded</li>
+        <li><code>||</code> – Run next only if previous failed</li>
+      </ul>
+      <pre><span class="cmd">echo</span> <span class="val">"Today is $(date)"</span>   <span class="comment"># Command substitution</span>
+<span class="cmd">ls</span> /tmp && <span class="cmd">echo</span> <span class="val">"success"</span> <span class="comment"># Runs echo only if ls succeeds</span>
+<span class="cmd">cat file</span> > <span class="val">output.txt</span>   <span class="comment"># Redirect stdout to file</span>
+<span class="cmd">cat file</span> 2> <span class="val">errors.txt</span>  <span class="comment"># Redirect stderr to file</span></pre>
+    </div>
+  </div>
+
+  <!-- 2. MANAGING FILES -->
+
+  <div class="section-title">2. Managing Files from the Command Line</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>📁 Linux Filesystem Hierarchy (FHS)</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <ul>
+        <li><code>/</code> – Root of the entire filesystem</li>
+        <li><code>/home</code> – User home directories</li>
+        <li><code>/root</code> – Root user's home</li>
+        <li><code>/etc</code> – System-wide configuration files</li>
+        <li><code>/var</code> – Variable data (logs, spool, databases)</li>
+        <li><code>/tmp</code> – Temporary files (cleared on reboot)</li>
+        <li><code>/usr</code> – User programs and data (read-only)</li>
+        <li><code>/bin</code> → <code>/usr/bin</code> – Common user commands</li>
+        <li><code>/sbin</code> → <code>/usr/sbin</code> – System admin commands</li>
+        <li><code>/boot</code> – Boot loader files, kernel</li>
+        <li><code>/dev</code> – Device files</li>
+        <li><code>/proc</code> – Virtual filesystem for kernel/process info</li>
+        <li><code>/sys</code> – Virtual filesystem for hardware/kernel info</li>
+        <li><code>/mnt</code> / <code>/media</code> – Temporary mount points</li>
+      </ul>
+      <div class="tip-box"><strong>💡 Tip:</strong> Absolute paths start with <code>/</code>. Relative paths don't. <code>.</code> = current dir, <code>..</code> = parent dir, <code>~</code> = your home.</div>
+    </div>
+  </div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>📄 Essential File Commands</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">ls</span> <span class="flag">-la</span>               <span class="comment"># List with hidden files + details</span>
+<span class="cmd">ls</span> <span class="flag">-lh</span>               <span class="comment"># Human-readable file sizes</span>
+<span class="cmd">cp</span> file1 file2        <span class="comment"># Copy file1 to file2</span>
+<span class="cmd">cp</span> <span class="flag">-r</span> dir1 dir2       <span class="comment"># Copy directory recursively</span>
+<span class="cmd">mv</span> file1 file2        <span class="comment"># Move/rename file</span>
+<span class="cmd">rm</span> file               <span class="comment"># Remove file</span>
+<span class="cmd">rm</span> <span class="flag">-rf</span> dir            <span class="comment"># Remove directory recursively (CAREFUL!)</span>
+<span class="cmd">mkdir</span> <span class="flag">-p</span> a/b/c        <span class="comment"># Create nested directories</span>
+<span class="cmd">touch</span> file            <span class="comment"># Create empty file or update timestamp</span>
+<span class="cmd">find</span> /etc <span class="flag">-name</span> <span class="val">"*.conf"</span>  <span class="comment"># Find files by name</span>
+<span class="cmd">find</span> / <span class="flag">-user</span> john     <span class="comment"># Find files owned by john</span>
+<span class="cmd">find</span> / <span class="flag">-perm</span> <span class="val">/4000</span>    <span class="comment"># Find SUID files</span></pre>
+    </div>
+  </div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🔗 Hard Links vs Soft Links</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <ul>
+        <li><strong>Hard link:</strong> Another name for the same inode. Works only within same filesystem. If original deleted, link still works.</li>
+        <li><strong>Soft/Symbolic link:</strong> A pointer to another file's path. Can cross filesystems. If original deleted, link is broken.</li>
+      </ul>
+      <pre><span class="cmd">ln</span> file1 hardlink1          <span class="comment"># Create hard link</span>
+<span class="cmd">ln</span> <span class="flag">-s</span> /path/file1 symlink1  <span class="comment"># Create symbolic link</span>
+<span class="cmd">ls</span> <span class="flag">-li</span>                      <span class="comment"># Show inode numbers (same = hard link)</span>
+<span class="cmd">readlink</span> symlink1            <span class="comment"># Show where symlink points</span></pre>
+    </div>
+  </div>
+
+  <!-- 3. HELP IN RHEL -->
+
+  <div class="section-title">3. Getting Help in Red Hat Enterprise Linux</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>📚 Manual Pages & Help</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">man</span> ls                <span class="comment"># Manual page for ls</span>
+<span class="cmd">man</span> <span class="flag">-k</span> <span class="val">password</span>        <span class="comment"># Search man pages by keyword</span>
+<span class="cmd">man</span> <span class="flag">5</span> passwd           <span class="comment"># Section 5 (file formats) of passwd</span>
+<span class="cmd">info</span> ls               <span class="comment"># GNU info documentation</span>
+<span class="cmd">pinfo</span> ls              <span class="comment"># Pager-friendly info</span>
+<span class="cmd">ls</span> <span class="flag">--help</span>             <span class="comment"># Inline help for a command</span>
+<span class="cmd">whatis</span> passwd         <span class="comment"># One-line description of command</span>
+<span class="cmd">apropos</span> network       <span class="comment"># Search man page descriptions</span></pre>
+      <div class="tip-box"><strong>💡 Man page sections:</strong> 1=user cmds, 2=system calls, 3=library funcs, 4=special files, 5=file formats, 6=games, 7=misc, 8=sys admin cmds</div>
+    </div>
+  </div>
+
+  <!-- 4. USERS & GROUPS -->
+
+  <div class="section-title">4. Creating, Viewing, and Managing Users and Groups</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>👤 User Management</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <p>Important files: <code>/etc/passwd</code> (user info), <code>/etc/shadow</code> (encrypted passwords), <code>/etc/group</code> (group info)</p>
+      <pre><span class="cmd">useradd</span> john                   <span class="comment"># Create user john</span>
+<span class="cmd">useradd</span> <span class="flag">-u</span> <span class="val">1500</span> <span class="flag">-G</span> <span class="val">wheel</span> john  <span class="comment"># UID 1500, add to wheel group</span>
+<span class="cmd">useradd</span> <span class="flag">-s</span> /sbin/nologin svc   <span class="comment"># Service account (no login)</span>
+<span class="cmd">passwd</span> john                    <span class="comment"># Set password for john</span>
+<span class="cmd">usermod</span> <span class="flag">-aG</span> wheel john         <span class="comment"># Add john to wheel group (append)</span>
+<span class="cmd">usermod</span> <span class="flag">-L</span> john                <span class="comment"># Lock account</span>
+<span class="cmd">usermod</span> <span class="flag">-U</span> john                <span class="comment"># Unlock account</span>
+<span class="cmd">userdel</span> john                   <span class="comment"># Delete user (keep home dir)</span>
+<span class="cmd">userdel</span> <span class="flag">-r</span> john               <span class="comment"># Delete user AND home dir</span>
+<span class="cmd">id john</span>                        <span class="comment"># Show UID/GID for john</span>
+<span class="cmd">chage</span> <span class="flag">-l</span> john                  <span class="comment"># Show password aging info</span>
+<span class="cmd">chage</span> <span class="flag">-M</span> <span class="val">90</span> john               <span class="comment"># Max 90 days before password expires</span></pre>
+      <div class="warn-box"><strong>⚠️ Exam Alert:</strong> Always use <code>-aG</code> with usermod (not just <code>-G</code>) or you will REMOVE the user from all other groups!</div>
+    </div>
+  </div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>👥 Group Management & sudo</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">groupadd</span> developers           <span class="comment"># Create new group</span>
+<span class="cmd">groupmod</span> <span class="flag">-n</span> devs developers    <span class="comment"># Rename group</span>
+<span class="cmd">groupdel</span> developers           <span class="comment"># Delete group</span>
+<span class="cmd">groups</span> john                   <span class="comment"># Show john's groups</span>
+<span class="cmd">newgrp</span> developers             <span class="comment"># Switch primary group temporarily</span>
+
+<span class="comment"># sudo — allow user to run commands as root</span>
+<span class="cmd">visudo</span>                        <span class="comment"># Edit sudoers (ALWAYS use this!)</span>
+<span class="comment"># Add: john ALL=(ALL) ALL</span>
+<span class="comment"># Or add user to wheel group:</span>
+<span class="cmd">usermod</span> <span class="flag">-aG</span> wheel john</pre>
+</div>
+
+  </div>
+
+  <!-- 5. PERMISSIONS -->
+
+  <div class="section-title">5. Controlling Access to Files</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🔐 File Permissions (chmod)</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <p>Permissions are shown as <code>rwxrwxrwx</code> → <strong>Owner | Group | Others</strong></p>
+      <ul>
+        <li><code>r</code> = read (4) &nbsp;&nbsp; <code>w</code> = write (2) &nbsp;&nbsp; <code>x</code> = execute (1)</li>
+        <li><code>rwx</code> = 7 &nbsp; <code>rw-</code> = 6 &nbsp; <code>r-x</code> = 5 &nbsp; <code>r--</code> = 4</li>
+      </ul>
+      <pre><span class="cmd">chmod</span> <span class="val">755</span> file    <span class="comment"># rwxr-xr-x (owner=7, group=5, others=5)</span>
+<span class="cmd">chmod</span> <span class="val">644</span> file    <span class="comment"># rw-r--r-- (typical file)</span>
+<span class="cmd">chmod</span> u+x file   <span class="comment"># Add execute for owner</span>
+<span class="cmd">chmod</span> go-w file  <span class="comment"># Remove write from group and others</span>
+<span class="cmd">chmod</span> a=r file   <span class="comment"># Set all (a) to read only</span>
+<span class="cmd">chown</span> john file  <span class="comment"># Change owner to john</span>
+<span class="cmd">chown</span> john:devs file  <span class="comment"># Change owner and group</span>
+<span class="cmd">chgrp</span> devs file  <span class="comment"># Change group only</span>
+<span class="cmd">umask</span>            <span class="comment"># Show default permission mask</span>
+<span class="cmd">umask</span> <span class="val">027</span>        <span class="comment"># New files get 640, dirs get 750</span></pre>
+    </div>
+  </div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🏷️ Special Permissions: SUID, SGID, Sticky Bit</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <ul>
+        <li><strong>SUID (4):</strong> File runs as the owner's UID. <code>-rwsr-xr-x</code> (s in owner execute)</li>
+        <li><strong>SGID (2):</strong> File runs as group's GID, OR on directory: new files inherit group. <code>-rwxr-sr-x</code></li>
+        <li><strong>Sticky Bit (1):</strong> On directory: only owner can delete their own files. Used on <code>/tmp</code>. <code>drwxrwxrwt</code></li>
+      </ul>
+      <pre><span class="cmd">chmod</span> <span class="val">4755</span> /usr/bin/prog   <span class="comment"># Set SUID</span>
+<span class="cmd">chmod</span> <span class="val">2755</span> /shared          <span class="comment"># Set SGID on directory</span>
+<span class="cmd">chmod</span> <span class="val">1777</span> /tmp             <span class="comment"># Sticky bit (like /tmp)</span>
+<span class="cmd">chmod</span> u+s file              <span class="comment"># Set SUID (symbolic)</span>
+<span class="cmd">chmod</span> g+s dir               <span class="comment"># Set SGID (symbolic)</span>
+<span class="cmd">chmod</span> o+t dir               <span class="comment"># Set sticky bit (symbolic)</span></pre>
+    </div>
+  </div>
+
+  <!-- 6. PROCESSES -->
+
+  <div class="section-title">6. Monitoring and Managing Linux Processes</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>⚙️ Process Management</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">ps aux</span>                <span class="comment"># All processes (BSD style)</span>
+<span class="cmd">ps</span> <span class="flag">-ef</span>                 <span class="comment"># All processes (System V style)</span>
+<span class="cmd">top</span>                   <span class="comment"># Live process monitor (q to quit)</span>
+<span class="cmd">htop</span>                  <span class="comment"># Better live monitor (if installed)</span>
+<span class="cmd">pgrep</span> httpd           <span class="comment"># Find PID of httpd</span>
+<span class="cmd">kill</span> <span class="val">1234</span>             <span class="comment"># Send SIGTERM (graceful stop)</span>
+<span class="cmd">kill</span> <span class="flag">-9</span> <span class="val">1234</span>          <span class="comment"># Send SIGKILL (force stop)</span>
+<span class="cmd">killall</span> httpd         <span class="comment"># Kill all processes named httpd</span>
+<span class="cmd">pkill</span> <span class="flag">-u</span> john         <span class="comment"># Kill all john's processes</span>
+
+<span class="comment"># Background / Foreground jobs</span>
+<span class="cmd">command &</span>             <span class="comment"># Run in background</span>
+<span class="cmd">jobs</span>                  <span class="comment"># List background jobs</span>
+<span class="cmd">fg %1</span>                 <span class="comment"># Bring job 1 to foreground</span>
+<span class="cmd">bg %1</span>                 <span class="comment"># Resume job 1 in background</span>
+<span class="cmd">Ctrl+Z</span>               <span class="comment"># Suspend foreground process</span>
+<span class="cmd">Ctrl+C</span>               <span class="comment"># Kill foreground process</span>
+
+<span class="comment"># Priority (nice value: -20=highest, 19=lowest)</span>
+<span class="cmd">nice</span> <span class="flag">-n 10</span> command    <span class="comment"># Start command with niceness 10</span>
+<span class="cmd">renice</span> <span class="flag">-n 5</span> <span class="flag">-p</span> <span class="val">1234</span>  <span class="comment"># Change priority of running PID</span></pre>
+</div>
+
+  </div>
+
+  <!-- 7. SERVICES -->
+
+  <div class="section-title">7. Controlling Services and Daemons (systemd)</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🔧 systemctl – Service Management</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">systemctl start</span> httpd       <span class="comment"># Start service</span>
+<span class="cmd">systemctl stop</span> httpd        <span class="comment"># Stop service</span>
+<span class="cmd">systemctl restart</span> httpd     <span class="comment"># Stop then start</span>
+<span class="cmd">systemctl reload</span> httpd      <span class="comment"># Reload config without stopping</span>
+<span class="cmd">systemctl enable</span> httpd      <span class="comment"># Enable at boot</span>
+<span class="cmd">systemctl disable</span> httpd     <span class="comment"># Disable at boot</span>
+<span class="cmd">systemctl enable --now</span> httpd <span class="comment"># Enable AND start NOW</span>
+<span class="cmd">systemctl status</span> httpd      <span class="comment"># Show status + recent logs</span>
+<span class="cmd">systemctl is-active</span> httpd   <span class="comment"># Returns "active" or "inactive"</span>
+<span class="cmd">systemctl is-enabled</span> httpd  <span class="comment"># Returns "enabled" or "disabled"</span>
+<span class="cmd">systemctl list-units</span>        <span class="comment"># List all active units</span>
+<span class="cmd">systemctl list-unit-files</span>   <span class="comment"># List all unit files + enabled state</span>
+
+<span class="comment"># System targets (run levels equivalent)</span>
+<span class="cmd">systemctl get-default</span>             <span class="comment"># Show current default target</span>
+<span class="cmd">systemctl set-default</span> multi-user  <span class="comment"># Boot to CLI</span>
+<span class="cmd">systemctl set-default</span> graphical   <span class="comment"># Boot to GUI</span>
+<span class="cmd">systemctl isolate</span> rescue.target   <span class="comment"># Switch to rescue mode NOW</span></pre>
+<div class="tip-box"><strong>💡 Always use <code>enable –now</code></strong> on the exam — it starts the service immediately AND enables it at boot in one command.</div>
+</div>
+
+  </div>
+
+  <!-- 8. SSH -->
+
+  <div class="section-title">8. Configuring and Securing SSH</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🔒 SSH Configuration & Key-Based Auth</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">ssh</span> user@hostname         <span class="comment"># Connect to remote host</span>
+<span class="cmd">ssh</span> <span class="flag">-p 2222</span> user@host     <span class="comment"># Connect on port 2222</span>
+<span class="cmd">ssh-keygen</span>                <span class="comment"># Generate key pair (creates ~/.ssh/id_rsa)</span>
+<span class="cmd">ssh-copy-id</span> user@host     <span class="comment"># Copy public key to remote host</span>
+<span class="cmd">ssh-keygen</span> <span class="flag">-t ed25519</span>    <span class="comment"># Generate ED25519 key (recommended)</span>
+
+<span class="comment"># Key files</span>
+~/.ssh/id_rsa              <span class="comment"># Private key (keep SECRET: chmod 600)</span>
+~/.ssh/id_rsa.pub          <span class="comment"># Public key (share this)</span>
+~/.ssh/authorized_keys     <span class="comment"># Remote: public keys allowed to login</span>
+~/.ssh/known_hosts         <span class="comment"># Hosts you’ve connected to</span>
+
+<span class="comment"># sshd config: /etc/ssh/sshd_config</span>
+<span class="val">PermitRootLogin no</span>        <span class="comment"># Disable root SSH login</span>
+<span class="val">PasswordAuthentication no</span> <span class="comment"># Force key-based auth only</span>
+<span class="val">Port 2222</span>                  <span class="comment"># Change SSH port</span></pre>
+<div class="warn-box"><strong>⚠️ After editing /etc/ssh/sshd_config:</strong> always run <code>systemctl restart sshd</code> and verify with <code>systemctl status sshd</code></div>
+</div>
+
+  </div>
+
+  <!-- 9. LOGGING -->
+
+  <div class="section-title">9. Analyzing and Storing Logs</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>📋 Journal & Log Management</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">journalctl</span>                  <span class="comment"># All logs (oldest first)</span>
+<span class="cmd">journalctl</span> <span class="flag">-f</span>              <span class="comment"># Follow (live) log output</span>
+<span class="cmd">journalctl</span> <span class="flag">-u</span> httpd        <span class="comment"># Logs for specific service</span>
+<span class="cmd">journalctl</span> <span class="flag">-p err</span>         <span class="comment"># Error level and above</span>
+<span class="cmd">journalctl</span> <span class="flag">--since</span> <span class="val">"1 hour ago"</span>
+<span class="cmd">journalctl</span> <span class="flag">--since</span> <span class="val">"2024-01-01 00:00"</span>
+<span class="cmd">journalctl</span> <span class="flag">-n 50</span>           <span class="comment"># Last 50 lines</span>
+<span class="cmd">journalctl</span> <span class="flag">-b</span>              <span class="comment"># Logs from current boot</span>
+<span class="cmd">journalctl</span> <span class="flag">-b -1</span>           <span class="comment"># Logs from previous boot</span>
+
+<span class="comment"># Traditional log files in /var/log/</span>
+/var/log/messages          <span class="comment"># General system messages</span>
+/var/log/secure            <span class="comment"># Auth / SSH logs</span>
+/var/log/boot.log          <span class="comment"># Boot messages</span>
+/var/log/httpd/            <span class="comment"># Apache logs</span>
+
+<span class="comment"># Make journal persistent</span>
+<span class="cmd">mkdir</span> <span class="flag">-p</span> /var/log/journal
+<span class="cmd">systemd-tmpfiles –create –prefix /var/log/journal</span></pre>
+</div>
+
+  </div>
+
+  <!-- 10. NETWORKING -->
+
+  <div class="section-title">10. Managing Networking</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🌐 Network Configuration with nmcli</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">ip addr show</span>                             <span class="comment"># Show IP addresses</span>
+<span class="cmd">ip route show</span>                            <span class="comment"># Show routing table</span>
+<span class="cmd">ip link show</span>                             <span class="comment"># Show network interfaces</span>
+<span class="cmd">hostname</span>                                 <span class="comment"># Show hostname</span>
+<span class="cmd">hostnamectl set-hostname</span> myserver        <span class="comment"># Set hostname permanently</span>
+<span class="cmd">ping</span> <span class="flag">-c 4</span> 8.8.8.8                       <span class="comment"># Test connectivity</span>
+<span class="cmd">ss</span> <span class="flag">-tulnp</span>                               <span class="comment"># Show listening ports</span>
+
+<span class="comment"># nmcli — NetworkManager CLI (EXAM ESSENTIAL)</span>
+<span class="cmd">nmcli con show</span>                           <span class="comment"># List connections</span>
+<span class="cmd">nmcli dev status</span>                         <span class="comment"># Show device status</span>
+<span class="cmd">nmcli con add type ethernet</span>   
+<span class="flag">con-name</span> <span class="val">“myconn”</span> <span class="flag">ifname</span> <span class="val">ens3</span>   
+<span class="flag">ipv4.addresses</span> <span class="val">192.168.1.10/24</span>   
+<span class="flag">ipv4.gateway</span> <span class="val">192.168.1.1</span>   
+<span class="flag">ipv4.dns</span> <span class="val">8.8.8.8</span>   
+<span class="flag">ipv4.method</span> <span class="val">manual</span>                    <span class="comment"># Create static IP</span>
+<span class="cmd">nmcli con mod</span> <span class="val">myconn</span> <span class="flag">ipv4.addresses</span> <span class="val">192.168.1.20/24</span>
+<span class="cmd">nmcli con up</span> <span class="val">myconn</span>                     <span class="comment"># Activate connection</span>
+<span class="cmd">nmcli con down</span> <span class="val">myconn</span>                   <span class="comment"># Deactivate connection</span></pre>
+</div>
+
+  </div>
+
+  <!-- 11. PACKAGE MANAGEMENT -->
+
+  <div class="section-title">11. Installing and Updating Software Packages (DNF)</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>📦 DNF Package Management</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">dnf install</span> httpd          <span class="comment"># Install httpd</span>
+<span class="cmd">dnf install</span> <span class="flag">-y</span> httpd       <span class="comment"># Install without confirmation prompt</span>
+<span class="cmd">dnf remove</span> httpd           <span class="comment"># Remove httpd</span>
+<span class="cmd">dnf update</span>                 <span class="comment"># Update all packages</span>
+<span class="cmd">dnf update</span> httpd           <span class="comment"># Update specific package</span>
+<span class="cmd">dnf search</span> web server      <span class="comment"># Search for packages</span>
+<span class="cmd">dnf info</span> httpd             <span class="comment"># Show package details</span>
+<span class="cmd">dnf list installed</span>         <span class="comment"># List installed packages</span>
+<span class="cmd">dnf list available</span>         <span class="comment"># List available packages</span>
+<span class="cmd">dnf provides</span> /usr/bin/vim  <span class="comment"># Find which package owns a file</span>
+<span class="cmd">dnf history</span>                <span class="comment"># Show install history</span>
+<span class="cmd">dnf history undo</span> <span class="val">5</span>         <span class="comment"># Undo transaction 5</span>
+<span class="cmd">dnf group install</span> <span class="val">"Development Tools"</span>
+<span class="cmd">dnf repolist</span>               <span class="comment"># List configured repositories</span>
+<span class="cmd">rpm</span> <span class="flag">-qa</span>                    <span class="comment"># Query all installed RPMs</span>
+<span class="cmd">rpm</span> <span class="flag">-qi</span> httpd              <span class="comment"># Info about installed package</span>
+<span class="cmd">rpm</span> <span class="flag">-ql</span> httpd              <span class="comment"># List files in package</span>
+<span class="cmd">rpm</span> <span class="flag">-qf</span> /usr/bin/vim       <span class="comment"># Find which RPM owns a file</span></pre>
+    </div>
+  </div>
+
+  <!-- 12. STORAGE -->
+
+  <div class="section-title">12. Accessing Linux File Systems (Storage Basics)</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>💾 Disk & Mount Management</h3>
+      <span class="priority p-critical">CRITICAL</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">lsblk</span>                      <span class="comment"># List block devices (disks/partitions)</span>
+<span class="cmd">df</span> <span class="flag">-h</span>                       <span class="comment"># Disk usage (human-readable)</span>
+<span class="cmd">du</span> <span class="flag">-sh</span> /var/log             <span class="comment"># Size of /var/log directory</span>
+<span class="cmd">fdisk</span> <span class="flag">-l</span>                    <span class="comment"># List partition tables</span>
+<span class="cmd">fdisk</span> /dev/sdb              <span class="comment"># Partition /dev/sdb (MBR)</span>
+<span class="cmd">gdisk</span> /dev/sdb              <span class="comment"># Partition /dev/sdb (GPT)</span>
+<span class="cmd">mkfs.xfs</span> /dev/sdb1          <span class="comment"># Format as XFS</span>
+<span class="cmd">mkfs.ext4</span> /dev/sdb1         <span class="comment"># Format as EXT4</span>
+<span class="cmd">mount</span> /dev/sdb1 /mnt/data   <span class="comment"># Mount temporarily</span>
+<span class="cmd">umount</span> /mnt/data             <span class="comment"># Unmount</span>
+<span class="cmd">blkid</span>                       <span class="comment"># Show UUIDs of block devices</span>
+
+<span class="comment"># Persistent mounts: /etc/fstab</span>
+<span class="comment"># Format: device   mountpoint  fstype  options  dump  pass</span>
+UUID=abc123   /mnt/data   xfs   defaults   0   0
+
+<span class="cmd">mount</span> <span class="flag">-a</span>                     <span class="comment"># Mount all in /etc/fstab (test!)</span></pre>
+<div class="warn-box"><strong>⚠️ Exam Tip:</strong> Always use UUID in <code>/etc/fstab</code>, not device names like <code>/dev/sdb1</code> — device names can change on reboot!</div>
+</div>
+
+  </div>
+
+  <!-- 13. SCHEDULING -->
+
+  <div class="section-title">13. Scheduling Future Tasks</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>⏰ cron & at Jobs</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="comment"># crontab — recurring scheduled jobs</span>
+<span class="cmd">crontab</span> <span class="flag">-e</span>          <span class="comment"># Edit YOUR crontab</span>
+<span class="cmd">crontab</span> <span class="flag">-l</span>          <span class="comment"># List YOUR crontab</span>
+<span class="cmd">crontab</span> <span class="flag">-r</span>          <span class="comment"># Remove YOUR crontab</span>
+<span class="cmd">crontab</span> <span class="flag">-u</span> john <span class="flag">-e</span>  <span class="comment"># Edit john's crontab (as root)</span>
+
+<span class="comment"># Cron field order: min  hour  day  month  weekday  command</span>
+<span class="comment">#                   0-59  0-23  1-31  1-12   0-7(0=Sun)</span>
+<span class="val">0 2 * * *</span> /scripts/backup.sh     <span class="comment"># Daily at 2:00 AM</span>
+<span class="val">*/5 * * * *</span> /check.sh            <span class="comment"># Every 5 minutes</span>
+<span class="val">0 9 * * 1</span> /weekly.sh             <span class="comment"># Every Monday at 9 AM</span>
+<span class="val">30 4 1 * *</span> /monthly.sh           <span class="comment"># 1st of each month at 4:30 AM</span>
+
+<span class="comment"># at — one-time future jobs</span>
+<span class="cmd">at</span> <span class="val">14:30</span>            <span class="comment"># Schedule at 2:30 PM (then type commands)</span>
+<span class="cmd">at</span> <span class="val">now +2 hours</span>     <span class="comment"># Schedule 2 hours from now</span>
+<span class="cmd">atq</span>                 <span class="comment"># List pending at jobs</span>
+<span class="cmd">atrm</span> <span class="val">3</span>              <span class="comment"># Remove at job #3</span></pre>
+</div>
+
+  </div>
+
+  <!-- 14. ARCHIVING -->
+
+  <div class="section-title">14. Archiving and Transferring Files</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>🗜️ tar, gzip, and File Transfer</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="comment"># tar — archive tool (remember: czf = Create Zip File)</span>
+<span class="cmd">tar</span> <span class="flag">czf</span> archive.tar.gz /dir/    <span class="comment"># Create compressed archive</span>
+<span class="cmd">tar</span> <span class="flag">cjf</span> archive.tar.bz2 /dir/   <span class="comment"># bzip2 compression</span>
+<span class="cmd">tar</span> <span class="flag">cJf</span> archive.tar.xz /dir/    <span class="comment"># xz compression</span>
+<span class="cmd">tar</span> <span class="flag">xzf</span> archive.tar.gz          <span class="comment"># Extract gzip archive</span>
+<span class="cmd">tar</span> <span class="flag">xf</span> archive.tar.gz <span class="flag">-C</span> /dest  <span class="comment"># Extract to specific dir</span>
+<span class="cmd">tar</span> <span class="flag">tzf</span> archive.tar.gz          <span class="comment"># List contents without extracting</span>
+<span class="cmd">tar</span> <span class="flag">tf</span> archive.tar              <span class="comment"># List uncompressed archive</span>
+
+<span class="comment"># File transfer</span>
+<span class="cmd">scp</span> file.txt user@host:/dest/    <span class="comment"># Secure copy to remote</span>
+<span class="cmd">scp</span> <span class="flag">-r</span> dir/ user@host:/dest/    <span class="comment"># Copy directory to remote</span>
+<span class="cmd">rsync</span> <span class="flag">-avz</span> src/ user@host:/dst/  <span class="comment"># Sync files (efficient)</span></pre>
+<div class="tip-box"><strong>💡 Memory trick:</strong> <code>c</code>=Create, <code>x</code>=eXtract, <code>t</code>=lisT, <code>f</code>=File, <code>z</code>=gZip, <code>j</code>=bzip2, <code>J</code>=xz, <code>v</code>=Verbose</div>
+</div>
+
+  </div>
+
+  <!-- 15. TEXT TOOLS -->
+
+  <div class="section-title">15. Processing Text Files & Streams</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>📝 Text Processing Commands</h3>
+      <span class="priority p-high">HIGH</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="cmd">cat</span> file              <span class="comment"># Display entire file</span>
+<span class="cmd">less</span> file             <span class="comment"># Page through file (q=quit, /=search)</span>
+<span class="cmd">head</span> <span class="flag">-n 20</span> file        <span class="comment"># First 20 lines</span>
+<span class="cmd">tail</span> <span class="flag">-n 20</span> file        <span class="comment"># Last 20 lines</span>
+<span class="cmd">tail</span> <span class="flag">-f</span> /var/log/msgs   <span class="comment"># Follow log in real time</span>
+<span class="cmd">grep</span> <span class="val">"error"</span> file       <span class="comment"># Search for "error"</span>
+<span class="cmd">grep</span> <span class="flag">-i</span> <span class="val">"error"</span> file    <span class="comment"># Case insensitive</span>
+<span class="cmd">grep</span> <span class="flag">-r</span> <span class="val">"text"</span> /dir     <span class="comment"># Recursive search</span>
+<span class="cmd">grep</span> <span class="flag">-v</span> <span class="val">"comment"</span> file  <span class="comment"># Show lines NOT matching</span>
+<span class="cmd">grep</span> <span class="flag">-n</span> <span class="val">"text"</span> file     <span class="comment"># Show line numbers</span>
+<span class="cmd">wc</span> <span class="flag">-l</span> file             <span class="comment"># Count lines</span>
+<span class="cmd">sort</span> file              <span class="comment"># Sort lines alphabetically</span>
+<span class="cmd">sort</span> <span class="flag">-n</span> file            <span class="comment"># Sort numerically</span>
+<span class="cmd">sort</span> <span class="flag">-r</span> file            <span class="comment"># Sort in reverse</span>
+<span class="cmd">uniq</span>                   <span class="comment"># Remove duplicate adjacent lines</span>
+<span class="cmd">cut</span> <span class="flag">-d: -f1</span> /etc/passwd <span class="comment"># Cut field 1 using : delimiter</span>
+<span class="cmd">awk</span> <span class="flag">-F:</span> <span class="val">'{print $1}'</span> /etc/passwd  <span class="comment"># Print first field</span>
+<span class="cmd">sed</span> <span class="val">'s/old/new/g'</span> file   <span class="comment"># Replace old with new (global)</span>
+<span class="cmd">tr</span> <span class="val">'a-z' 'A-Z'</span>          <span class="comment"># Translate lowercase to uppercase</span></pre>
+    </div>
+  </div>
+
+  <!-- 16. BASH SCRIPTING -->
+
+  <div class="section-title">16. Bash Shell Scripting Basics</div>
+
+  <div class="note-card">
+    <div class="note-card-header">
+      <h3>📜 Shell Script Fundamentals</h3>
+      <span class="priority p-medium">MEDIUM</span>
+    </div>
+    <div class="note-card-body">
+      <pre><span class="comment">#!/bin/bash</span>
+<span class="comment"># Always start with shebang line</span>
+
+<span class="comment"># Variables</span>
+NAME=<span class="val">“Alice”</span>
+<span class="cmd">echo</span> <span class="val">“Hello $NAME”</span>
+
+<span class="comment"># If statement</span>
+if [ <span class="val">”$NAME”</span> == <span class="val">“Alice”</span> ]; then
+<span class="cmd">echo</span> <span class="val">“Found Alice”</span>
+elif [ <span class="val">”$NAME”</span> == <span class="val">“Bob”</span> ]; then
+<span class="cmd">echo</span> <span class="val">“Found Bob”</span>
+else
+<span class="cmd">echo</span> <span class="val">“Unknown”</span>
+fi
+
+<span class="comment"># For loop</span>
+for i in 1 2 3; do
+<span class="cmd">echo</span> <span class="val">“Number: $i”</span>
+done
+
+<span class="comment"># While loop</span>
+COUNT=0
+while [ $COUNT <span class="flag">-lt</span> 5 ]; do
+<span class="cmd">echo</span> $COUNT
+COUNT=$((COUNT+1))
+done
+
+<span class="comment"># Test operators: -eq -ne -lt -gt -le -ge (numbers)</span>
+<span class="comment">#                 == != (strings)</span>
+<span class="comment">#                 -f (file exists) -d (dir exists) -z (empty string)</span>
+
+<span class="comment"># Make executable and run:</span>
+<span class="cmd">chmod</span> +x script.sh && ./script.sh</pre>
+</div>
+
+  </div>
+
+</div><!-- /notes panel -->
+
+<!-- ============================= CHEATSHEET PANEL ============================= -->
+
+<div id="cheatsheet" class="panel">
+
+  <div class="section-title">🗂️ Master Command Cheatsheet – RH124</div>
+
+  <table class="cheat-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Command</th>
+        <th>What it Does</th>
+        <th>Exam Priority</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- FILE MANAGEMENT -->
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>ls -la</code></td><td>List all files with permissions, size, hidden</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>cp -r src/ dst/</code></td><td>Copy directory recursively</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>mv src dst</code></td><td>Move or rename file/dir</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>rm -rf dir/</code></td><td>Remove directory (force, recursive)</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>mkdir -p a/b/c</code></td><td>Create nested directories</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>find / -name "*.conf"</code></td><td>Find files by name pattern</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>find / -user john</code></td><td>Find files owned by user</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>find / -perm /4000</code></td><td>Find SUID files</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>ln -s target link</code></td><td>Create symbolic link</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-files">FILES</span></td><td><code>ln target hardlink</code></td><td>Create hard link</td><td>🟠 Medium</td></tr>
+      <!-- PERMISSIONS -->
+      <tr><td><span class="cat-label cat-perms">PERMS</span></td><td><code>chmod 755 file</code></td><td>Set numeric permissions (rwxr-xr-x)</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-perms">PERMS</span></td><td><code>chmod u+x file</code></td><td>Add execute for owner (symbolic)</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-perms">PERMS</span></td><td><code>chown john:devs file</code></td><td>Change owner and group</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-perms">PERMS</span></td><td><code>chgrp devs file</code></td><td>Change group only</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-perms">PERMS</span></td><td><code>umask 027</code></td><td>Set default permission mask</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-perms">PERMS</span></td><td><code>chmod 4755 file</code></td><td>Set SUID bit</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-perms">PERMS</span></td><td><code>chmod 2755 dir</code></td><td>Set SGID bit on directory</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-perms">PERMS</span></td><td><code>chmod 1777 dir</code></td><td>Set sticky bit</td><td>🟡 High</td></tr>
+      <!-- USERS -->
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>useradd -u 1500 john</code></td><td>Create user with specific UID</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>passwd john</code></td><td>Set user password</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>usermod -aG wheel john</code></td><td>Append john to wheel group</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>usermod -L / -U john</code></td><td>Lock / Unlock user account</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>userdel -r john</code></td><td>Delete user and home directory</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>groupadd developers</code></td><td>Create new group</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>id john</code></td><td>Show UID, GID, groups</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>chage -M 90 john</code></td><td>Password expires in 90 days</td><td>🟠 Medium</td></tr>
+      <tr><td><span class="cat-label cat-users">USERS</span></td><td><code>visudo</code></td><td>Safely edit /etc/sudoers</td><td>🔴 Critical</td></tr>
+      <!-- PROCESSES -->
+      <tr><td><span class="cat-label cat-proc">PROC</span></td><td><code>ps aux</code></td><td>Show all running processes</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-proc">PROC</span></td><td><code>top</code></td><td>Live process monitor</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-proc">PROC</span></td><td><code>kill -9 PID</code></td><td>Force kill process by PID</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-proc">PROC</span></td><td><code>killall httpd</code></td><td>Kill all processes named httpd</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-proc">PROC</span></td><td><code>pgrep -u john</code></td><td>Find PIDs for user john</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-proc">PROC</span></td><td><code>nice -n 10 cmd</code></td><td>Start command at niceness 10</td><td>🟠 Medium</td></tr>
+      <tr><td><span class="cat-label cat-proc">PROC</span></td><td><code>renice -n 5 -p PID</code></td><td>Change priority of running process</td><td>🟠 Medium</td></tr>
+      <!-- SERVICES -->
+      <tr><td><span class="cat-label cat-service">SERVICE</span></td><td><code>systemctl enable --now svc</code></td><td>Enable AND start service immediately</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-service">SERVICE</span></td><td><code>systemctl disable --now svc</code></td><td>Disable AND stop service immediately</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-service">SERVICE</span></td><td><code>systemctl restart svc</code></td><td>Stop and start service</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-service">SERVICE</span></td><td><code>systemctl status svc</code></td><td>Show service status + recent logs</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-service">SERVICE</span></td><td><code>systemctl list-units --type=service</code></td><td>List all service units</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-service">SERVICE</span></td><td><code>systemctl set-default multi-user</code></td><td>Set default boot to CLI</td><td>🟡 High</td></tr>
+      <!-- NETWORKING -->
+      <tr><td><span class="cat-label cat-net">NET</span></td><td><code>ip addr show</code></td><td>Show IP addresses on all interfaces</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-net">NET</span></td><td><code>ip route show</code></td><td>Show routing table</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-net">NET</span></td><td><code>ss -tulnp</code></td><td>Show open/listening ports + processes</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-net">NET</span></td><td><code>nmcli con show</code></td><td>List network connections</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-net">NET</span></td><td><code>nmcli con up name</code></td><td>Activate a connection</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-net">NET</span></td><td><code>hostnamectl set-hostname x</code></td><td>Set system hostname permanently</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-net">NET</span></td><td><code>ping -c 4 8.8.8.8</code></td><td>Test connectivity (4 packets)</td><td>🟡 High</td></tr>
+      <!-- STORAGE -->
+      <tr><td><span class="cat-label cat-storage">STORAGE</span></td><td><code>lsblk</code></td><td>List block devices and partitions</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-storage">STORAGE</span></td><td><code>df -h</code></td><td>Show disk usage (human-readable)</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-storage">STORAGE</span></td><td><code>fdisk /dev/sdb</code></td><td>Partition a disk (MBR)</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-storage">STORAGE</span></td><td><code>mkfs.xfs /dev/sdb1</code></td><td>Format partition as XFS</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-storage">STORAGE</span></td><td><code>mount /dev/sdb1 /mnt</code></td><td>Mount a partition</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-storage">STORAGE</span></td><td><code>blkid</code></td><td>Show UUIDs for all block devices</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-storage">STORAGE</span></td><td><code>mount -a</code></td><td>Mount everything in /etc/fstab</td><td>🔴 Critical</td></tr>
+      <!-- PACKAGES -->
+      <tr><td><span class="cat-label cat-pack">PACKAGES</span></td><td><code>dnf install -y pkg</code></td><td>Install package without prompt</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-pack">PACKAGES</span></td><td><code>dnf remove pkg</code></td><td>Remove package</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-pack">PACKAGES</span></td><td><code>dnf search keyword</code></td><td>Search for packages</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-pack">PACKAGES</span></td><td><code>dnf provides /bin/vim</code></td><td>Which package owns this file?</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-pack">PACKAGES</span></td><td><code>dnf list installed</code></td><td>List installed packages</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-pack">PACKAGES</span></td><td><code>rpm -qf /usr/bin/vim</code></td><td>Find RPM owning a file</td><td>🟡 High</td></tr>
+      <!-- LOGS -->
+      <tr><td><span class="cat-label cat-log">LOGS</span></td><td><code>journalctl -f</code></td><td>Follow live system logs</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-log">LOGS</span></td><td><code>journalctl -u httpd</code></td><td>Logs for specific service</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-log">LOGS</span></td><td><code>journalctl -p err</code></td><td>Show errors and above</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-log">LOGS</span></td><td><code>journalctl -b</code></td><td>Logs from current boot</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-log">LOGS</span></td><td><code>journalctl --since "1h ago"</code></td><td>Logs from the last hour</td><td>🟡 High</td></tr>
+      <!-- SHELL -->
+      <tr><td><span class="cat-label cat-shell">SHELL</span></td><td><code>grep -rin "text" /dir</code></td><td>Recursive, case-insensitive, line numbers</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-shell">SHELL</span></td><td><code>awk -F: '{print $1}' /etc/passwd</code></td><td>Print first colon-delimited field</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-shell">SHELL</span></td><td><code>sed 's/old/new/g' file</code></td><td>Global text substitution</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-shell">SHELL</span></td><td><code>tar czf arch.tar.gz dir/</code></td><td>Create gzip archive</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-shell">SHELL</span></td><td><code>tar xzf arch.tar.gz</code></td><td>Extract gzip archive</td><td>🔴 Critical</td></tr>
+      <tr><td><span class="cat-label cat-shell">SHELL</span></td><td><code>crontab -e</code></td><td>Edit user crontab</td><td>🟡 High</td></tr>
+      <tr><td><span class="cat-label cat-shell">SHELL</span></td><td><code>ssh-keygen && ssh-copy-id host</code></td><td>Generate + deploy SSH key</td><td>🟡 High</td></tr>
+    </tbody>
+  </table>
+
+</div><!-- /cheatsheet panel -->
+
+<!-- ============================= TRACKER PANEL ============================= -->
+
+<div id="tracker" class="panel">
+
+  <div class="overall-progress">
+    <h3>📊 Overall RH124 Progress</h3>
+    <div><span class="big-pct" id="overall-pct">0%</span></div>
+    <div class="overall-bar-bg"><div class="overall-bar-fill" id="overall-bar" style="width:0%"></div></div>
+    <div id="overall-pct-text">0 of 0 topics completed</div>
+    <button class="reset-btn" onclick="resetAll()">🔄 Reset All Progress</button>
+  </div>
+
+  <div class="tracker-grid" id="tracker-grid">
+
+```
+<div class="tracker-card" data-module="1">
+  <h4><span class="num">1</span> Accessing the Command Line</h4>
+  <div class="topic-item"><input type="checkbox" id="t1_1"><label for="t1_1">Virtual consoles (TTY / pts)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t1_2"><label for="t1_2">Bash shell basics & prompt</label></div>
+  <div class="topic-item"><input type="checkbox" id="t1_3"><label for="t1_3">I/O redirection (&gt;, &gt;&gt;, 2&gt;, |)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t1_4"><label for="t1_4">Command substitution $(...)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t1_5"><label for="t1_5">Special characters &amp;&amp;, ||, ;</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_1" style="width:0%"></div></div><div class="progress-label" id="lbl_1">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="2">
+  <h4><span class="num">2</span> Managing Files</h4>
+  <div class="topic-item"><input type="checkbox" id="t2_1"><label for="t2_1">Linux FHS directories (/, /etc, /var…)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t2_2"><label for="t2_2">cp, mv, rm, mkdir, touch</label></div>
+  <div class="topic-item"><input type="checkbox" id="t2_3"><label for="t2_3">find command with options</label></div>
+  <div class="topic-item"><input type="checkbox" id="t2_4"><label for="t2_4">Hard links vs symbolic links</label></div>
+  <div class="topic-item"><input type="checkbox" id="t2_5"><label for="t2_5">Globbing patterns (*, ?, [ ])</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_2" style="width:0%"></div></div><div class="progress-label" id="lbl_2">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="3">
+  <h4><span class="num">3</span> Getting Help</h4>
+  <div class="topic-item"><input type="checkbox" id="t3_1"><label for="t3_1">man pages (sections, navigation)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t3_2"><label for="t3_2">man -k / apropos keyword search</label></div>
+  <div class="topic-item"><input type="checkbox" id="t3_3"><label for="t3_3">info / pinfo pages</label></div>
+  <div class="topic-item"><input type="checkbox" id="t3_4"><label for="t3_4">--help flag usage</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_3" style="width:0%"></div></div><div class="progress-label" id="lbl_3">0 / 4</div></div>
+</div>
+
+<div class="tracker-card" data-module="4">
+  <h4><span class="num">4</span> Users &amp; Groups</h4>
+  <div class="topic-item"><input type="checkbox" id="t4_1"><label for="t4_1">useradd / usermod / userdel</label></div>
+  <div class="topic-item"><input type="checkbox" id="t4_2"><label for="t4_2">groupadd / groupmod / groupdel</label></div>
+  <div class="topic-item"><input type="checkbox" id="t4_3"><label for="t4_3">passwd / chage (password aging)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t4_4"><label for="t4_4">/etc/passwd, /etc/shadow, /etc/group</label></div>
+  <div class="topic-item"><input type="checkbox" id="t4_5"><label for="t4_5">sudo / visudo / wheel group</label></div>
+  <div class="topic-item"><input type="checkbox" id="t4_6"><label for="t4_6">su vs sudo differences</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_4" style="width:0%"></div></div><div class="progress-label" id="lbl_4">0 / 6</div></div>
+</div>
+
+<div class="tracker-card" data-module="5">
+  <h4><span class="num">5</span> File Permissions</h4>
+  <div class="topic-item"><input type="checkbox" id="t5_1"><label for="t5_1">Octal permissions (chmod 755)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t5_2"><label for="t5_2">Symbolic permissions (chmod u+x)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t5_3"><label for="t5_3">chown / chgrp</label></div>
+  <div class="topic-item"><input type="checkbox" id="t5_4"><label for="t5_4">umask and default permissions</label></div>
+  <div class="topic-item"><input type="checkbox" id="t5_5"><label for="t5_5">SUID / SGID / Sticky bit</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_5" style="width:0%"></div></div><div class="progress-label" id="lbl_5">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="6">
+  <h4><span class="num">6</span> Processes</h4>
+  <div class="topic-item"><input type="checkbox" id="t6_1"><label for="t6_1">ps aux / ps -ef</label></div>
+  <div class="topic-item"><input type="checkbox" id="t6_2"><label for="t6_2">top / htop (interpret output)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t6_3"><label for="t6_3">kill / killall / pkill signals</label></div>
+  <div class="topic-item"><input type="checkbox" id="t6_4"><label for="t6_4">Background jobs (&amp;, fg, bg, jobs)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t6_5"><label for="t6_5">nice / renice (priority)</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_6" style="width:0%"></div></div><div class="progress-label" id="lbl_6">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="7">
+  <h4><span class="num">7</span> systemd Services</h4>
+  <div class="topic-item"><input type="checkbox" id="t7_1"><label for="t7_1">systemctl start/stop/restart/reload</label></div>
+  <div class="topic-item"><input type="checkbox" id="t7_2"><label for="t7_2">systemctl enable/disable (--now)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t7_3"><label for="t7_3">systemctl status / is-active / is-enabled</label></div>
+  <div class="topic-item"><input type="checkbox" id="t7_4"><label for="t7_4">systemd targets (multi-user, graphical)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t7_5"><label for="t7_5">Unit file structure &amp; locations</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_7" style="width:0%"></div></div><div class="progress-label" id="lbl_7">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="8">
+  <h4><span class="num">8</span> SSH &amp; Remote Access</h4>
+  <div class="topic-item"><input type="checkbox" id="t8_1"><label for="t8_1">ssh user@host connection</label></div>
+  <div class="topic-item"><input type="checkbox" id="t8_2"><label for="t8_2">ssh-keygen (RSA/ED25519)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t8_3"><label for="t8_3">ssh-copy-id deployment</label></div>
+  <div class="topic-item"><input type="checkbox" id="t8_4"><label for="t8_4">/etc/ssh/sshd_config hardening</label></div>
+  <div class="topic-item"><input type="checkbox" id="t8_5"><label for="t8_5">Key file permissions (~/.ssh)</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_8" style="width:0%"></div></div><div class="progress-label" id="lbl_8">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="9">
+  <h4><span class="num">9</span> Logs &amp; journalctl</h4>
+  <div class="topic-item"><input type="checkbox" id="t9_1"><label for="t9_1">journalctl basic usage</label></div>
+  <div class="topic-item"><input type="checkbox" id="t9_2"><label for="t9_2">journalctl -u, -f, -p, -b flags</label></div>
+  <div class="topic-item"><input type="checkbox" id="t9_3"><label for="t9_3">journalctl --since / --until</label></div>
+  <div class="topic-item"><input type="checkbox" id="t9_4"><label for="t9_4">Log files in /var/log/</label></div>
+  <div class="topic-item"><input type="checkbox" id="t9_5"><label for="t9_5">Making journal persistent</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_9" style="width:0%"></div></div><div class="progress-label" id="lbl_9">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="10">
+  <h4><span class="num">10</span> Networking</h4>
+  <div class="topic-item"><input type="checkbox" id="t10_1"><label for="t10_1">ip addr / ip route / ip link</label></div>
+  <div class="topic-item"><input type="checkbox" id="t10_2"><label for="t10_2">nmcli con show / dev status</label></div>
+  <div class="topic-item"><input type="checkbox" id="t10_3"><label for="t10_3">nmcli con add (static IP)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t10_4"><label for="t10_4">nmcli con mod / up / down</label></div>
+  <div class="topic-item"><input type="checkbox" id="t10_5"><label for="t10_5">hostnamectl set-hostname</label></div>
+  <div class="topic-item"><input type="checkbox" id="t10_6"><label for="t10_6">ss -tulnp (open ports)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t10_7"><label for="t10_7">/etc/hosts file</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_10" style="width:0%"></div></div><div class="progress-label" id="lbl_10">0 / 7</div></div>
+</div>
+
+<div class="tracker-card" data-module="11">
+  <h4><span class="num">11</span> DNF Package Management</h4>
+  <div class="topic-item"><input type="checkbox" id="t11_1"><label for="t11_1">dnf install / remove / update</label></div>
+  <div class="topic-item"><input type="checkbox" id="t11_2"><label for="t11_2">dnf search / info / list</label></div>
+  <div class="topic-item"><input type="checkbox" id="t11_3"><label for="t11_3">dnf provides (find owner)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t11_4"><label for="t11_4">dnf history / undo</label></div>
+  <div class="topic-item"><input type="checkbox" id="t11_5"><label for="t11_5">rpm -qa / -qi / -ql / -qf</label></div>
+  <div class="topic-item"><input type="checkbox" id="t11_6"><label for="t11_6">dnf repolist / repo config</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_11" style="width:0%"></div></div><div class="progress-label" id="lbl_11">0 / 6</div></div>
+</div>
+
+<div class="tracker-card" data-module="12">
+  <h4><span class="num">12</span> Storage &amp; File Systems</h4>
+  <div class="topic-item"><input type="checkbox" id="t12_1"><label for="t12_1">lsblk / df -h / du -sh</label></div>
+  <div class="topic-item"><input type="checkbox" id="t12_2"><label for="t12_2">fdisk / gdisk partitioning</label></div>
+  <div class="topic-item"><input type="checkbox" id="t12_3"><label for="t12_3">mkfs.xfs / mkfs.ext4</label></div>
+  <div class="topic-item"><input type="checkbox" id="t12_4"><label for="t12_4">mount / umount</label></div>
+  <div class="topic-item"><input type="checkbox" id="t12_5"><label for="t12_5">/etc/fstab persistent mounts</label></div>
+  <div class="topic-item"><input type="checkbox" id="t12_6"><label for="t12_6">blkid (UUID lookup)</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_12" style="width:0%"></div></div><div class="progress-label" id="lbl_12">0 / 6</div></div>
+</div>
+
+<div class="tracker-card" data-module="13">
+  <h4><span class="num">13</span> Scheduling Tasks</h4>
+  <div class="topic-item"><input type="checkbox" id="t13_1"><label for="t13_1">crontab -e / -l / -r</label></div>
+  <div class="topic-item"><input type="checkbox" id="t13_2"><label for="t13_2">Cron syntax (min hr day mon wday)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t13_3"><label for="t13_3">System cron (/etc/cron.d/)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t13_4"><label for="t13_4">at / atq / atrm (one-time jobs)</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_13" style="width:0%"></div></div><div class="progress-label" id="lbl_13">0 / 4</div></div>
+</div>
+
+<div class="tracker-card" data-module="14">
+  <h4><span class="num">14</span> Archiving &amp; Transfer</h4>
+  <div class="topic-item"><input type="checkbox" id="t14_1"><label for="t14_1">tar czf / xzf (create/extract)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t14_2"><label for="t14_2">tar tzf (list archive)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t14_3"><label for="t14_3">gzip / gunzip / bzip2</label></div>
+  <div class="topic-item"><input type="checkbox" id="t14_4"><label for="t14_4">scp (secure copy)</label></div>
+  <div class="topic-item"><input type="checkbox" id="t14_5"><label for="t14_5">rsync (sync directories)</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_14" style="width:0%"></div></div><div class="progress-label" id="lbl_14">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="15">
+  <h4><span class="num">15</span> Text Processing</h4>
+  <div class="topic-item"><input type="checkbox" id="t15_1"><label for="t15_1">grep -i / -r / -n / -v</label></div>
+  <div class="topic-item"><input type="checkbox" id="t15_2"><label for="t15_2">head / tail / tail -f</label></div>
+  <div class="topic-item"><input type="checkbox" id="t15_3"><label for="t15_3">sort / uniq / wc</label></div>
+  <div class="topic-item"><input type="checkbox" id="t15_4"><label for="t15_4">cut / awk for field extraction</label></div>
+  <div class="topic-item"><input type="checkbox" id="t15_5"><label for="t15_5">sed substitution s/old/new/g</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_15" style="width:0%"></div></div><div class="progress-label" id="lbl_15">0 / 5</div></div>
+</div>
+
+<div class="tracker-card" data-module="16">
+  <h4><span class="num">16</span> Bash Scripting</h4>
+  <div class="topic-item"><input type="checkbox" id="t16_1"><label for="t16_1">Shebang line &amp; execution</label></div>
+  <div class="topic-item"><input type="checkbox" id="t16_2"><label for="t16_2">Variables and quoting</label></div>
+  <div class="topic-item"><input type="checkbox" id="t16_3"><label for="t16_3">if / elif / else / fi</label></div>
+  <div class="topic-item"><input type="checkbox" id="t16_4"><label for="t16_4">for and while loops</label></div>
+  <div class="topic-item"><input type="checkbox" id="t16_5"><label for="t16_5">Test operators ([ ] / [[ ]])</label></div>
+  <div class="progress-bar-wrap"><div class="progress-bar-bg"><div class="progress-bar-fill" id="prog_16" style="width:0%"></div></div><div class="progress-label" id="lbl_16">0 / 5</div></div>
+</div>
+```
+
+  </div>
+</div><!-- /tracker panel -->
+
+<script>
+  // Tab switching
+  function showTab(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // Config: which checkboxes belong to which module
+  const modules = {
+    1: [1,2,3,4,5], 2: [1,2,3,4,5], 3: [1,2,3,4], 4: [1,2,3,4,5,6],
+    5: [1,2,3,4,5], 6: [1,2,3,4,5], 7: [1,2,3,4,5], 8: [1,2,3,4,5],
+    9: [1,2,3,4,5], 10: [1,2,3,4,5,6,7], 11: [1,2,3,4,5,6],
+    12: [1,2,3,4,5,6], 13: [1,2,3,4], 14: [1,2,3,4,5],
+    15: [1,2,3,4,5], 16: [1,2,3,4,5]
+  };
+
+  function updateModule(mod) {
+    const items = modules[mod];
+    const checked = items.filter(i => {
+      const el = document.getElementById('t' + mod + '_' + i);
+      return el && el.checked;
+    }).length;
+    const pct = Math.round((checked / items.length) * 100);
+    const bar = document.getElementById('prog_' + mod);
+    const lbl = document.getElementById('lbl_' + mod);
+    if (bar) bar.style.width = pct + '%';
+    if (lbl) lbl.textContent = checked + ' / ' + items.length;
+    updateOverall();
+    saveState();
+  }
+
+  function updateOverall() {
+    let total = 0, done = 0;
+    Object.entries(modules).forEach(([mod, items]) => {
+      total += items.length;
+      items.forEach(i => {
+        const el = document.getElementById('t' + mod + '_' + i);
+        if (el && el.checked) done++;
+      });
+    });
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    document.getElementById('overall-pct').textContent = pct + '%';
+    document.getElementById('overall-bar').style.width = pct + '%';
+    document.getElementById('overall-pct-text').textContent = done + ' of ' + total + ' topics completed';
+  }
+
+  function saveState() {
+    const state = {};
+    Object.entries(modules).forEach(([mod, items]) => {
+      items.forEach(i => {
+        const el = document.getElementById('t' + mod + '_' + i);
+        if (el) state['t' + mod + '_' + i] = el.checked;
+      });
+    });
+    try { localStorage.setItem('rh124_progress', JSON.stringify(state)); } catch(e) {}
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem('rh124_progress');
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      Object.entries(state).forEach(([key, val]) => {
+        const el = document.getElementById(key);
+        if (el) el.checked = val;
+      });
+    } catch(e) {}
+    Object.keys(modules).forEach(mod => updateModule(parseInt(mod)));
+  }
+
+  function resetAll() {
+    if (!confirm('Reset all progress?')) return;
+    Object.entries(modules).forEach(([mod, items]) => {
+      items.forEach(i => {
+        const el = document.getElementById('t' + mod + '_' + i);
+        if (el) el.checked = false;
+      });
+      updateModule(parseInt(mod));
+    });
+    try { localStorage.removeItem('rh124_progress'); } catch(e) {}
+  }
+
+  // Attach change events
+  Object.entries(modules).forEach(([mod, items]) => {
+    items.forEach(i => {
+      const el = document.getElementById('t' + mod + '_' + i);
+      if (el) el.addEventListener('change', () => updateModule(parseInt(mod)));
+    });
+  });
+
+  // Load on page init
+  loadState();
+</script>
+
+</body>
+</html>
