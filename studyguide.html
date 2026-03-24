@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RHCSA Master Study Guide</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #080808; }
+    #root { height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React + ReactDOM + Babel (no build step needed) -->
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const courses = {
+      rh124: {
+        label: "RH124",
+        title: "Red Hat System Administration I",
+        color: "#E84000",
+        accent: "#FF6020",
+        bg: "#1a0800",
+        chapters: [
+          {
+            id: 1, title: "Getting Started with RHEL", emoji: "🐧",
+            summary: [
+              "RHEL is enterprise Linux built on open-source, supported by Red Hat. Understand the difference between RHEL, CentOS Stream, Fedora, and upstream/downstream relationships.",
+              "The Linux kernel manages hardware, processes, memory, and I/O. User space programs run above the kernel; system calls bridge them.",
+              "Shell: The command interpreter. Bash (Bourne Again SHell) is default. Prompt: `[user@hostname dir]$` for regular users, `#` for root.",
+              "Desktop environments: GNOME is default in RHEL. Know how to switch between GUI and CLI (Ctrl+Alt+F2–F6 for TTYs).",
+              "System documentation: man pages, info pages, /usr/share/doc, Red Hat Customer Portal (access.redhat.com). Know these for the exam.",
+              "Subscription model: register with subscription-manager to get security updates, packages, and support. Required for a real RHEL system.",
+            ],
+            commands: [
+              { cmd: "date", desc: "Show current date and time" },
+              { cmd: "passwd", desc: "Change your own password" },
+              { cmd: "file /etc/passwd", desc: "Determine file type" },
+              { cmd: "head -n 5 /etc/passwd", desc: "Show first 5 lines" },
+              { cmd: "tail -n 5 /etc/passwd", desc: "Show last 5 lines" },
+              { cmd: "wc -l /etc/passwd", desc: "Count lines in file" },
+              { cmd: "cat /etc/redhat-release", desc: "Show RHEL version" },
+              { cmd: "uname -r", desc: "Show kernel version" },
+            ],
+            labs: [
+              "Log in to RHEL as a regular user. Switch to root with `su -`. Note the prompt change. Switch back. Practice Ctrl+Alt+F2 to reach a new TTY.",
+              "Run `cat /etc/redhat-release`, `uname -a`, `hostname`, `whoami`, `id` — understand each output.",
+              "Use `man passwd` to understand the file format. Navigate with arrow keys, search with /pattern, quit with q.",
+              "Check system uptime with `uptime`. View running processes with `top` (press q to quit) and `ps aux`.",
+              "Open a file in `less`. Practice: space (next page), b (back), /term (search), n (next match), G (end), g (start), q (quit).",
+            ],
+            tip: "Know the anatomy of `ls -l` output cold. Every exam task starts with navigating the filesystem and reading file metadata.",
+          },
+          {
+            id: 2, title: "Accessing the Command Line", emoji: "💻",
+            summary: [
+              "Bash features: tab completion (press Tab once for unique, twice for options), command history (up/down arrows, Ctrl+R), command editing (Ctrl+A start, Ctrl+E end, Ctrl+U clear line).",
+              "Command syntax: `command [options] [arguments]`. Options can be short (-l) or long (--long). Arguments are what the command acts on.",
+              "Quoting: single quotes preserve literal value of ALL chars. Double quotes allow variable expansion ($VAR) and command substitution (`cmd` or $(cmd)). Backslash escapes single char.",
+              "Variables: `VAR=value` (no spaces!). Access with $VAR. `export VAR` makes it available to child processes. `env` lists all environment variables.",
+              "Input/Output redirection: > (overwrite stdout), >> (append stdout), < (stdin from file), 2> (stderr), 2>&1 (merge stderr into stdout), /dev/null (discard).",
+              "Pipes: | sends stdout of one command to stdin of next. Build pipelines: `ps aux | grep httpd | awk '{print $2}'`.",
+              "Shell expansion: Brace {a,b,c}, tilde ~, pathname globbing (*, ?, []), variable $, command $(), arithmetic $(( )).",
+            ],
+            commands: [
+              { cmd: "Ctrl+R", desc: "Reverse search bash history" },
+              { cmd: "Ctrl+A / Ctrl+E", desc: "Jump to start / end of line" },
+              { cmd: "Ctrl+U / Ctrl+K", desc: "Delete to start / end of line" },
+              { cmd: "history", desc: "Show command history" },
+              { cmd: "!42", desc: "Re-run history item 42" },
+              { cmd: "echo $((2**10))", desc: "Arithmetic expansion" },
+              { cmd: "echo {a..z}", desc: "Brace expansion (sequence)" },
+              { cmd: "VAR=$(date)", desc: "Command substitution into variable" },
+            ],
+            labs: [
+              "Practice tab completion: type `sy` and press Tab twice. Try `ls /et` + Tab. Get comfortable with it — saves huge time on exam.",
+              "Redirection drill: `ls /etc > /tmp/out.txt`, `ls /fake 2>/tmp/err.txt`, `ls /etc /fake > /tmp/both.txt 2>&1`. Inspect each file.",
+              "Variable practice: set NAME='YourName', COURSE='RHCSA'. Echo them. Run `bash -c 'echo $NAME'` — it's empty because not exported. Fix with export.",
+              "Build a pipeline: `cat /etc/passwd | cut -d: -f1 | sort | uniq | wc -l` — count unique users.",
+              "Quoting exercise: understand why `echo '$HOME'` vs `echo \"$HOME\"` produce different results. Try both.",
+            ],
+            tip: "Ctrl+R is your best friend during the exam. Practice using it to find previous commands quickly instead of retyping.",
+          },
+          {
+            id: 3, title: "Managing Files from the Command Line", emoji: "📁",
+            summary: [
+              "Linux Filesystem Hierarchy Standard (FHS): /boot (kernel), /dev (devices), /etc (configs), /home (users), /root (root home), /run (runtime), /tmp (temp), /usr (programs), /var (variable data).",
+              "Absolute vs relative paths: Absolute starts with / (from root). Relative from current directory. `..` = parent, `.` = current, `~` = home.",
+              "Essential file commands: ls, cp, mv, rm, mkdir, rmdir, touch. Critical flags: `ls -la`, `cp -r` (recursive), `rm -rf` (dangerous!), `mkdir -p` (create parents).",
+              "Hard links: same inode, same filesystem, no original concept. Soft/symbolic links: pointer to path, can cross filesystems, breaks if target deleted. `ln` vs `ln -s`.",
+              "Globbing: `*` (any chars, including none), `?` (exactly one char), `[abc]` (one of a, b, or c), `[^abc]` (not a, b, c), `[0-9]` (range).",
+              "find command: `find PATH -options`. Key: -name, -iname, -type (f/d/l), -size (+/-n), -user, -group, -perm, -mtime, -exec CMD {} \\;",
+            ],
+            commands: [
+              { cmd: "pwd", desc: "Print working directory" },
+              { cmd: "ls -lah /etc", desc: "Long list, all, human-readable sizes" },
+              { cmd: "cp -rp /etc /tmp/etc-copy", desc: "Copy dir recursively, preserve attributes" },
+              { cmd: "mkdir -p /project/src/lib", desc: "Create nested directories" },
+              { cmd: "find /etc -name '*.conf' -type f", desc: "Find all .conf files" },
+              { cmd: "find / -user alice -size +1M 2>/dev/null", desc: "Files owned by alice >1MB" },
+              { cmd: "find /tmp -mtime +7 -delete", desc: "Delete files older than 7 days" },
+              { cmd: "find / -perm /4000 -type f 2>/dev/null", desc: "Find SUID files" },
+            ],
+            labs: [
+              "Map the FHS: use `ls` to explore /etc, /var/log, /proc/cpuinfo, /dev/sda. Read /proc/meminfo and /proc/uptime — they're virtual files!",
+              "Copy, move, rename practice: copy /etc/hosts to /tmp. Rename the copy. Move it to your home dir. Delete it.",
+              "find mastery: find all files in /var/log modified in the last 24 hours. Find all directories owned by root in /home. Find files larger than 5MB anywhere on the system.",
+              "Links lab: create /tmp/original.txt. Make a hard link and a soft link to it. Delete the original. Check which link still works and why.",
+              "Globbing challenge: in /etc, list only files starting with 's', only files with exactly 5 chars in name, only files ending in a digit.",
+            ],
+            tip: "find -exec is powerful: `find /etc -name '*.conf' -exec grep -l 'server' {} \\;` finds configs containing 'server'. Practice this pattern.",
+          },
+          {
+            id: 4, title: "Getting Help in RHEL", emoji: "❓",
+            summary: [
+              "man pages: organized in sections. 1=user commands, 5=file formats, 8=admin commands. `man 5 passwd` vs `man 1 passwd` show different pages.",
+              "man navigation: arrows to scroll, /pattern to search, n for next match, N for previous, q to quit. `man -k keyword` searches all man pages (= `apropos keyword`).",
+              "Other help sources: `--help` flag (quick reference), `info` pages (more detailed, GNU tools), /usr/share/doc/ (package docs, examples, README).",
+              "pinfo: prettier info page reader. `pinfo coreutils 'ls invocation'` goes directly to ls documentation.",
+              "Red Hat documentation: access.redhat.com has RHEL docs, KnowledgeBase, and official guides — available during exam if network is configured.",
+              "whatis: one-line description of a command. `whatis passwd` shows all man page entries for 'passwd' across sections.",
+            ],
+            commands: [
+              { cmd: "man 5 passwd", desc: "Man page section 5 (file format)" },
+              { cmd: "man -k 'copy file'", desc: "Search man pages by keyword" },
+              { cmd: "apropos cron", desc: "Search man descriptions (same as man -k)" },
+              { cmd: "whatis ls", desc: "One-line description of command" },
+              { cmd: "info coreutils", desc: "GNU info pages for coreutils" },
+              { cmd: "ls --help", desc: "Quick built-in help" },
+              { cmd: "ls /usr/share/doc/ | grep httpd", desc: "Find package docs" },
+            ],
+            labs: [
+              "Find the man page that describes the /etc/passwd FILE FORMAT (not the command). What section is it in?",
+              "Use `man -k` to find the command that reports file system disk space usage. Then read its man page.",
+              "Look up the crontab file format with man. Find the correct syntax for 'every Monday at 2:30 AM'.",
+              "Explore /usr/share/doc/ for a package you know (like bash or vim). Read its README or changelog.",
+              "Practice within man pages: open `man bash`, search for 'HISTSIZE', 'PS1', and 'alias'. Jump between sections.",
+            ],
+            tip: "During the exam you HAVE man pages. Practice using `man -k` and /searches to find things quickly — this skill alone can save you from failing.",
+          },
+          {
+            id: 5, title: "Creating, Viewing, and Editing Text Files", emoji: "📝",
+            summary: [
+              "vim modes: Normal (default, navigation/commands), Insert (i to enter, Esc to exit), Visual (v for chars, V for lines, Ctrl+V for block), Command-line (: for commands).",
+              "vim essential commands — Normal mode: h/j/k/l (move), w/b (word forward/back), 0/$ (line start/end), gg/G (file start/end), dd (delete line), yy (yank/copy), p (paste), u (undo), Ctrl+R (redo).",
+              "vim Command-line mode: :w (save), :q (quit), :wq or :x (save+quit), :q! (force quit no save), :set number (show line numbers), :%s/old/new/g (global replace).",
+              "Shell redirection for creating files: `echo 'text' > file`, `cat > file` (Ctrl+D to end), heredoc: `cat << EOF > file ... EOF`.",
+              "nano: simpler editor. Ctrl+O (save), Ctrl+X (exit), Ctrl+W (search), Ctrl+K (cut line), Ctrl+U (paste). Shown in status bar.",
+              "grep for text searching: -i (case insensitive), -n (line numbers), -r (recursive), -v (invert match), -l (filenames only), -c (count matches), -A/-B/-C (context lines).",
+            ],
+            commands: [
+              { cmd: "vim /etc/hosts", desc: "Open file in vim" },
+              { cmd: ":%s/old/new/g", desc: "vim: global search and replace" },
+              { cmd: "vimtutor", desc: "Built-in vim tutorial (run this!)" },
+              { cmd: "echo 'text' >> file.txt", desc: "Append text to file" },
+              { cmd: "grep -rn 'sshd' /etc/", desc: "Find sshd references recursively" },
+              { cmd: "grep -v '^#' /etc/ssh/sshd_config", desc: "Show non-comment lines" },
+              { cmd: "cat -A file.txt", desc: "Show hidden chars (^I=tab, $=newline)" },
+            ],
+            labs: [
+              "Run `vimtutor` right now — complete all lessons. This is the single best vim practice. Do it again tomorrow.",
+              "Create a file in vim: open vim newfile.txt, enter insert mode, type 10 lines of text, save with :wq. Reopen, delete line 5 with dd, copy line 3 with yy, paste after line 7 with p.",
+              "vim find/replace: open /tmp/copy of a config file. Replace all instances of 'localhost' with '127.0.0.1'. Use :%s/localhost/127.0.0.1/g.",
+              "heredoc practice: `cat << 'EOF' > /tmp/test.sh` then type `#!/bin/bash`, `echo Hello`, `EOF`. Then `cat /tmp/test.sh` to verify.",
+              "grep challenge: in /etc/ssh/sshd_config, show only lines that aren't comments or blank. Then search /var/log for all lines containing 'Failed'.",
+            ],
+            tip: "RHCSA examiners often require editing config files. If vim is slow for you, at least know nano. But vim is what sysadmins use — invest the time.",
+          },
+          {
+            id: 6, title: "Managing Local Users and Groups", emoji: "👥",
+            summary: [
+              "/etc/passwd format: username:x:UID:GID:GECOS:home:shell. /etc/shadow: encrypted passwords + expiry. /etc/group: groupname:x:GID:members. Never edit directly.",
+              "useradd key flags: -m (create home), -d /path (custom home), -s /shell (login shell), -u UID (specific UID), -G group (supplementary groups), -c 'comment'. Default settings in /etc/default/useradd and /etc/login.defs.",
+              "usermod: modify existing users. -aG (append to group — ALWAYS use -a with -G!), -L (lock), -U (unlock), -s (change shell), -e date (expiry). userdel -r removes home and mail spool.",
+              "passwd: set passwords. chage: manage password aging. `chage -l user` (list), -M (max days), -m (min days), -W (warning days), -E (expiry date), -d 0 (force change on next login).",
+              "Groups: groupadd -g GID name, groupmod, groupdel. Primary group (in /etc/passwd) vs supplementary groups. `newgrp groupname` switches active group in current shell.",
+              "id command shows UID, GID, and all groups. `groups` shows just group names. `getent passwd user` queries name service databases (works with LDAP too).",
+            ],
+            commands: [
+              { cmd: "useradd -m -u 1500 -G wheel -s /bin/bash alice", desc: "Create user with specific UID, group, shell" },
+              { cmd: "usermod -aG devs alice", desc: "Add alice to devs (append, don't replace!)" },
+              { cmd: "chage -M 90 -W 14 -I 7 alice", desc: "90-day max, 14-day warning, 7-day inactivity lock" },
+              { cmd: "chage -d 0 alice", desc: "Force password change on next login" },
+              { cmd: "passwd -l alice", desc: "Lock account (prefix ! in shadow)" },
+              { cmd: "usermod -s /sbin/nologin bob", desc: "Prevent bob from logging in" },
+              { cmd: "getent group wheel", desc: "Show wheel group members" },
+            ],
+            labs: [
+              "Create users: alice (UID 2000, home /home/alice, bash), bob (UID 2001, no home, shell /sbin/nologin), svcacct (system account, no home, UID < 1000).",
+              "Create groups: 'devteam' (GID 3000), 'ops'. Add alice to both. Add bob to ops. Verify with `id alice` and `id bob`.",
+              "Password policy: set alice's password to expire in 60 days, warn 10 days before, lock after 5 days inactive. Force her to change on next login.",
+              "Lock bob's account. Try to switch to bob (`su - bob`) — it should fail. Unlock it. Try again — it should work (if password set).",
+              "sudo configuration with visudo: give alice full sudo (with password). Give %ops sudo for only `/usr/bin/systemctl`. Give bob NOPASSWD sudo for `/usr/sbin/reboot` only.",
+            ],
+            tip: "ALWAYS use `usermod -aG` not `usermod -G` — the latter replaces ALL supplementary groups! This mistake can lock admins out of sudo.",
+          },
+          {
+            id: 7, title: "Controlling Access to Files", emoji: "🔒",
+            summary: [
+              "Permission bits: rwx for owner (u), group (g), others (o). Octal: r=4, w=2, x=1. Common combos: 7=rwx, 5=r-x, 4=r--, 6=rw-.",
+              "chmod: octal (`chmod 755 file`) or symbolic (`chmod u+x,g-w,o=r file`). For directories: read=list contents, write=create/delete files, execute=enter directory (cd into it).",
+              "chown: `chown user:group file`. `chown user file` (only owner). `chown :group file` (only group). -R for recursive. Only root can change ownership.",
+              "Special bits: SUID (chmod u+s / 4xxx) — execute as file owner; SGID (chmod g+s / 2xxx) — on files: run as group, on dirs: new files inherit group; Sticky (chmod +t / 1xxx) — only owner can delete.",
+              "umask: subtracted from default (666 for files, 777 for dirs). umask 022 → files=644, dirs=755. umask 027 → files=640, dirs=750. Set in ~/.bashrc or /etc/profile.",
+              "ACLs: `getfacl`, `setfacl -m u:user:perms file`, `setfacl -m g:group:perms`. Default ACLs on dirs: `setfacl -m d:u:user:perms dir`. Remove: `setfacl -x u:user file`.",
+            ],
+            commands: [
+              { cmd: "chmod 2775 /shared", desc: "rwxrwsr-x: SGID + group write" },
+              { cmd: "chmod 1777 /tmp/drop", desc: "rwxrwxrwt: sticky bit" },
+              { cmd: "find / -perm -4000 2>/dev/null", desc: "Find all SUID files" },
+              { cmd: "setfacl -Rm u:alice:rX /project", desc: "Recursive ACL for alice (read+execute)" },
+              { cmd: "setfacl -m d:g:devs:rwx /shared", desc: "Default ACL: new files inherit devs rwx" },
+              { cmd: "getfacl /shared/file", desc: "View complete ACL" },
+              { cmd: "setfacl -b file", desc: "Remove ALL ACLs from file" },
+            ],
+            labs: [
+              "Permissions drill: create /project (root-owned). chmod 770. chown :devs /project. Verify alice (in devs) can write, bob (not in devs) cannot.",
+              "SGID on directory: `chmod g+s /project`. Create a file inside as alice. The file's group should be devs, not alice.",
+              "Sticky bit lab: mkdir /tmp/shared, chmod 1777. Log in as two users, each creates a file. Verify each user can delete ONLY their own file.",
+              "SUID exercise: note that /usr/bin/passwd has SUID. Run `ls -la /usr/bin/passwd` to see the 's'. Understand why this is needed.",
+              "ACL scenario: /data/report.txt owned by root. alice needs read, bob needs rw, but others get nothing. Configure with setfacl. Verify by switching users and testing.",
+            ],
+            tip: "Know how to READ permission output: `-rwsr-xr-x` = regular file, SUID set, owner=rws, group=r-x, others=r-x. The 's' replaces 'x' when SUID is set.",
+          },
+          {
+            id: 8, title: "Monitoring and Managing Processes", emoji: "⚡",
+            summary: [
+              "Processes: every running program is a process with a PID. Parent-child relationships (PPID). States: Running (R), Sleeping (S), Zombie (Z), Stopped (T).",
+              "Viewing processes: `ps aux` (all processes, all users, full), `ps -ef` (full format). `top` (interactive, real-time). `pgrep name` (get PIDs by name). `pstree` (tree view).",
+              "Signals: kill -SIGNAL PID. Common: SIGTERM (15, graceful stop), SIGKILL (9, force kill), SIGHUP (1, reload config), SIGSTOP (19, pause), SIGCONT (18, resume).",
+              "Job control: Ctrl+Z (stop/suspend), Ctrl+C (interrupt/kill), & (background), `bg` (resume in background), `fg` (bring to foreground), `jobs` (list background jobs).",
+              "nice / renice: process priority (-20 highest to +19 lowest). Regular users can only increase nice (lower priority). Root can set any value. `renice -n 10 PID`.",
+              "Load average: shown in top/uptime. Three numbers: 1-min, 5-min, 15-min averages. Values equal to # of CPUs = fully loaded. Higher = overloaded.",
+            ],
+            commands: [
+              { cmd: "ps aux | grep httpd", desc: "Find httpd processes" },
+              { cmd: "pgrep -la sshd", desc: "List PIDs and names matching sshd" },
+              { cmd: "kill -15 1234", desc: "Gracefully terminate PID 1234" },
+              { cmd: "killall httpd", desc: "Kill all processes named httpd" },
+              { cmd: "pkill -u alice", desc: "Kill all processes owned by alice" },
+              { cmd: "nice -n 10 ./script.sh", desc: "Run script with low priority" },
+              { cmd: "renice -n -5 -p 1234", desc: "Increase priority of PID 1234" },
+              { cmd: "top -u alice", desc: "top filtered to alice's processes" },
+            ],
+            labs: [
+              "Run `sleep 1000 &` three times. Use `jobs` to list them. Bring one to foreground with `fg %2`. Suspend it with Ctrl+Z. Kill with `kill %2`.",
+              "Monitor with top: press k (kill process), r (renice), u (filter by user), M (sort by memory), P (sort by CPU). Press ? for help.",
+              "Signal practice: start a sleep process, get its PID, send SIGSTOP (pause it), verify it's stopped in ps output, send SIGCONT to resume.",
+              "Find CPU-hungry process: run `sha256sum /dev/urandom &` then watch top. Kill it with pkill.",
+              "Load average interpretation: run `uptime`. If stress is installed, run `stress --cpu 4 &`. Watch load average climb in top.",
+            ],
+            tip: "ps aux vs ps -ef: they show mostly same info but different format. For the exam, `ps aux` is quicker to type. Know how to pipe it to grep.",
+          },
+          {
+            id: 9, title: "Controlling Services and Boot", emoji: "🚀",
+            summary: [
+              "systemd: PID 1, the init system in RHEL. Manages services (units). Unit files in /usr/lib/systemd/system/ (don't edit) and /etc/systemd/system/ (custom/overrides).",
+              "systemctl commands: start, stop, restart, reload (reload config without full restart), status (show current state + recent logs), enable (start at boot), disable (don't start at boot), is-active, is-enabled.",
+              "Unit types: .service (daemons), .socket (socket-activated), .timer (cron replacement), .target (group of units, like boot targets), .mount (filesystems).",
+              "Targets: multi-user.target (CLI, network), graphical.target (desktop), rescue.target (single user, root password needed), emergency.target (minimal, root password needed).",
+              "Boot process: BIOS/UEFI → GRUB2 → kernel → initramfs → systemd → default target. Know where to interrupt for rescue/password reset.",
+              "Masking: `systemctl mask` prevents a service from being started at ALL (even manually or as dependency). Stronger than disable. `systemctl unmask` reverses.",
+            ],
+            commands: [
+              { cmd: "systemctl status sshd", desc: "Detailed sshd status + recent logs" },
+              { cmd: "systemctl enable --now httpd", desc: "Enable AND start httpd immediately" },
+              { cmd: "systemctl disable --now httpd", desc: "Disable AND stop httpd immediately" },
+              { cmd: "systemctl list-units --type=service", desc: "List all active services" },
+              { cmd: "systemctl list-units --failed", desc: "Show failed units" },
+              { cmd: "systemctl get-default", desc: "Show current boot target" },
+              { cmd: "systemctl set-default multi-user.target", desc: "Set CLI boot target" },
+              { cmd: "systemctl isolate rescue.target", desc: "Switch to rescue mode NOW" },
+            ],
+            labs: [
+              "Practice the service lifecycle: install httpd (`dnf install httpd`). Start it. Enable it. Check status. Stop it. Disable it. Mask it. Try to start it — it should fail.",
+              "Boot target switching: `systemctl set-default multi-user.target`. Reboot. You should land in CLI. Switch back to graphical and reboot again.",
+              "List all failed services: `systemctl --failed`. Deliberately break a service (bad config) and observe it fail, then fix and restart.",
+              "Explore unit files: `cat /usr/lib/systemd/system/sshd.service`. Understand [Unit], [Service], [Install] sections.",
+              "Override a unit: `systemctl edit sshd` creates /etc/systemd/system/sshd.service.d/override.conf. Add a restart delay. Run `systemctl daemon-reload` after.",
+            ],
+            tip: "`systemctl enable --now` is the one-liner to both enable and start. On exam, always do BOTH — a started service that isn't enabled won't survive reboot.",
+          },
+          {
+            id: 10, title: "Configuring and Securing SSH", emoji: "🔑",
+            summary: [
+              "SSH (Secure Shell): encrypted remote access. Client `~/.ssh/config` for client settings. Server `/etc/ssh/sshd_config` for server settings. Service: sshd.",
+              "Key-based auth: `ssh-keygen -t ecdsa` (or rsa/ed25519). Public key goes to `~/.ssh/authorized_keys` on remote (permissions 600). Use `ssh-copy-id` to copy automatically.",
+              "SSH config hardening: PermitRootLogin no, PasswordAuthentication no (after keys work!), PubkeyAuthentication yes, Port 22 (change for obscurity), AllowUsers alice bob.",
+              "SSH tunneling: `-L local:host:remote` (local port forward), `-R remote:host:local` (remote forward), `-D port` (SOCKS proxy). `-N` (no command, just tunnel).",
+              "scp: secure copy. `scp file user@host:/path`. `scp -r dir user@host:/path`. `scp user@host:/remote /local`. rsync preferred for large/incremental transfers.",
+              "ssh-agent: caches decrypted private key. `eval $(ssh-agent)`, `ssh-add ~/.ssh/id_ecdsa`. Avoids typing passphrase repeatedly in a session.",
+            ],
+            commands: [
+              { cmd: "ssh-keygen -t ed25519 -C 'comment'", desc: "Generate Ed25519 key (modern/recommended)" },
+              { cmd: "ssh-copy-id -i ~/.ssh/id_ed25519.pub user@host", desc: "Install public key on remote" },
+              { cmd: "ssh -v user@host", desc: "Verbose SSH (debug connection issues)" },
+              { cmd: "scp -rp /data user@host:/backup/", desc: "Copy dir, preserve timestamps" },
+              { cmd: "rsync -avz --delete /src/ user@host:/dst/", desc: "Sync, delete removed files on dest" },
+              { cmd: "ss -tlnp | grep sshd", desc: "Verify sshd is listening" },
+              { cmd: "firewall-cmd --add-service=ssh --permanent", desc: "Allow SSH through firewall" },
+            ],
+            labs: [
+              "Generate an ed25519 key pair. Copy the public key to another VM (or localhost). SSH in without password. Check ~/.ssh/authorized_keys on the target.",
+              "SSH hardening: disable root login, disable password auth (ONLY after verifying key auth works!). Restart sshd. Verify hardening works.",
+              "Client config: edit ~/.ssh/config to create an alias. Add Host myserver, HostName 192.168.x.x, User alice, IdentityFile ~/.ssh/id_ed25519. Then `ssh myserver` works.",
+              "rsync lab: sync /etc to /tmp/etc-backup. Add a file to /etc. Re-run rsync — only the new file transfers. Use --delete to sync deletions too.",
+              "Troubleshoot SSH: deliberately break something (wrong permissions on .ssh dir, wrong authorized_keys perms). Use `ssh -vvv` to diagnose.",
+            ],
+            tip: "~/.ssh MUST be 700 and authorized_keys MUST be 600. Wrong permissions silently prevent key auth. `ssh -v` shows you exactly where it fails.",
+          },
+          {
+            id: 11, title: "Analyzing and Storing Logs", emoji: "📋",
+            summary: [
+              "systemd-journald: collects all logs (kernel, services, apps) into binary journal. `journalctl` queries it. Fast, indexed. Non-persistent by default (cleared on reboot) unless /var/log/journal/ exists.",
+              "journalctl key options: -u unit (filter by service), -f (follow/live), -n 50 (last 50 lines), -p err (priority: emerg/alert/crit/err/warning/notice/info/debug), --since / --until (time range), -b (current boot), -b -1 (previous boot), -x (explanations).",
+              "rsyslog: traditional syslog daemon. Config: /etc/rsyslog.conf and /etc/rsyslog.d/. Writes to /var/log/. Facility.Priority format: `auth.err`, `*.info`, `kern.*`.",
+              "Key log files: /var/log/messages (general), /var/log/secure (auth/sudo), /var/log/cron (cron jobs), /var/log/maillog, /var/log/boot.log, /var/log/dmesg (kernel ring buffer).",
+              "logrotate: manages log rotation. Config in /etc/logrotate.conf and /etc/logrotate.d/. Options: daily/weekly/monthly, rotate N (keep N old), compress, missingok, notifempty.",
+              "logger: send messages to syslog from command line/scripts. `logger -p auth.info 'Manual log entry'`. Useful for testing log pipelines.",
+            ],
+            commands: [
+              { cmd: "journalctl -u sshd -f", desc: "Follow sshd logs live" },
+              { cmd: "journalctl -p err -b", desc: "Error+ messages from current boot" },
+              { cmd: "journalctl --since '1 hour ago'", desc: "Logs from last hour" },
+              { cmd: "journalctl _UID=1000", desc: "Logs from processes of UID 1000" },
+              { cmd: "journalctl -b -1 -p crit", desc: "Critical messages from last boot" },
+              { cmd: "logger -p local0.info 'test message'", desc: "Send test message to syslog" },
+              { cmd: "dmesg | grep -i error", desc: "Kernel ring buffer errors" },
+            ],
+            labs: [
+              "Make journal persistent: `mkdir -p /var/log/journal`, `systemctl restart systemd-journald`. Reboot and verify previous boot logs are available with `journalctl -b -1`.",
+              "Log analysis: trigger failed SSH login (wrong password). Find it in journalctl. Find it in /var/log/secure. Compare the formats.",
+              "Set up custom rsyslog rule: send all auth messages to /var/log/auth-custom.log. Edit /etc/rsyslog.d/auth.conf. Test with `logger -p auth.info 'test'`.",
+              "logrotate: manually rotate a log: `logrotate -f /etc/logrotate.conf`. Check what happened to /var/log/messages — compressed copy should appear.",
+              "Monitor in real time: `journalctl -f &` in background. Then start/stop services, run sudo commands, trigger events. Watch log entries appear.",
+            ],
+            tip: "journalctl -xe is your go-to for debugging service failures — it shows recent logs WITH explanations. Faster than reading raw files.",
+          },
+          {
+            id: 12, title: "Managing Networking", emoji: "🌐",
+            summary: [
+              "Network configuration in RHEL: NetworkManager is the primary tool. Config files in /etc/NetworkManager/system-connections/. nmcli for CLI control.",
+              "nmcli commands: `nmcli con show`, `nmcli con add`, `nmcli con mod`, `nmcli con up/down`, `nmcli dev status`. Use `nmcli con mod` to change IP, gateway, DNS.",
+              "IP addressing: IPv4 (32-bit, e.g., 192.168.1.10/24). /24 = 255.255.255.0. CIDR notation. Know common subnets: /8, /16, /24, /32.",
+              "Key commands: `ip addr` (show IPs), `ip route` (routing table), `ip link` (interfaces). Replaces ifconfig/route. `ss` replaces netstat.",
+              "DNS: /etc/resolv.conf (nameserver entries). /etc/nsswitch.conf controls lookup order (files, dns). /etc/hosts for static hostname resolution.",
+              "hostname: `hostnamectl set-hostname newname`. Types: static (in config), transient (runtime), pretty (human-readable). /etc/hostname stores static name.",
+            ],
+            commands: [
+              { cmd: "ip addr show", desc: "Show all IP addresses" },
+              { cmd: "ip route show", desc: "Show routing table" },
+              { cmd: "ss -tlnp", desc: "Show listening TCP ports" },
+              { cmd: "nmcli con show", desc: "List network connections" },
+              { cmd: "nmcli con mod eth0 ipv4.addresses 192.168.1.10/24", desc: "Set static IP" },
+              { cmd: "nmcli con mod eth0 ipv4.gateway 192.168.1.1", desc: "Set gateway" },
+              { cmd: "nmcli con mod eth0 ipv4.method manual", desc: "Switch to static (disable DHCP)" },
+              { cmd: "nmcli con up eth0", desc: "Apply network changes" },
+              { cmd: "hostnamectl set-hostname server1.example.com", desc: "Set FQDN hostname" },
+            ],
+            labs: [
+              "Configure a static IP on your VM using nmcli. Set IP, subnet, gateway, DNS. Bring connection down and up. Verify with `ip addr` and `ping`.",
+              "Add a second IP address to an interface: `nmcli con mod eth0 +ipv4.addresses 192.168.2.50/24`. Apply and verify.",
+              "DNS resolution: add entries to /etc/hosts and verify with `getent hosts hostname`. Check which takes priority over DNS using nsswitch.conf.",
+              "Port scanning lab: use `ss -tlnp` to see all listening services. Use `nc -zv hostname port` to test connectivity to specific ports.",
+              "Network troubleshooting: ping (ICMP), traceroute, curl/wget (HTTP), dig/nslookup (DNS). Practice a connectivity troubleshoot workflow: link → IP → gateway → DNS → service.",
+            ],
+            tip: "Know nmcli cold. The exam WILL ask you to configure static IPs. The key command sequence: mod the connection, then `nmcli con up` to apply.",
+          },
+          {
+            id: 13, title: "Archiving and Transferring Files", emoji: "📦",
+            summary: [
+              "tar (Tape Archive): -c (create), -x (extract), -t (list), -f (file), -v (verbose), -z (gzip .gz), -j (bzip2 .bz2), -J (xz .xz), -p (preserve permissions), -C /path (extract to path).",
+              "Compression comparison: gzip (fastest, .gz), bzip2 (better compression, .bz2), xz (best compression, slowest, .xz). For the exam, gzip is most common.",
+              "scp: `scp [options] source dest`. Local to remote: `scp file user@host:/dir`. Remote to local: `scp user@host:/file /local`. -r (recursive), -p (preserve), -P port.",
+              "rsync: preferred for large/incremental. -a (archive = recursive+preserve everything), -v (verbose), -z (compress transfer), --delete (sync deletions), --exclude (skip pattern). Supports SSH by default.",
+              "sftp: interactive secure FTP. `sftp user@host`. Commands: get, put, ls, lls, lcd, cd, mkdir, rm. Good for interactive browsing.",
+              "tar with SSH pipe: `tar -czf - /dir | ssh user@host 'tar -xzf - -C /remote'` — transfer and extract in one pipe without creating intermediate file.",
+            ],
+            commands: [
+              { cmd: "tar -czf /backup/etc.tar.gz /etc", desc: "Create compressed backup of /etc" },
+              { cmd: "tar -xzf archive.tar.gz -C /restore/", desc: "Extract to specific directory" },
+              { cmd: "tar -tzf archive.tar.gz | head", desc: "List archive contents without extracting" },
+              { cmd: "tar -czf - /data | ssh user@host 'cat > /backup/data.tar.gz'", desc: "Archive and transfer in one pipe" },
+              { cmd: "rsync -avz --progress /src/ user@host:/dst/", desc: "Sync with progress indicator" },
+              { cmd: "rsync -avz --dry-run /src/ /dst/", desc: "Preview rsync without making changes" },
+            ],
+            labs: [
+              "Archive drill: tar /etc into /tmp/etc-backup.tar.gz. List contents without extracting. Extract only the sshd_config file.",
+              "Compare compression: compress a large directory with -z (gzip), -j (bzip2), -J (xz). Compare file sizes and time taken. Which is smallest?",
+              "rsync practice: sync /var/log to /tmp/log-backup. Modify a log file. Re-run rsync — verify only changed files transfer (watch the output).",
+              "sftp session: connect to another host with sftp. Upload a file with put, download with get. Navigate remote dirs with cd, local dirs with lcd.",
+              "Pipe transfer: archive a directory over SSH without saving locally: `tar -czf - /home/alice | ssh user@server 'tar -xzf - -C /tmp/'`",
+            ],
+            tip: "tar flags order matters in some implementations. -czf means create+gzip+file. Always put the archive filename right after -f. `tar czf archive.tar.gz /dir` works fine.",
+          },
+          {
+            id: 14, title: "Installing and Updating Software", emoji: "📦",
+            summary: [
+              "DNF (Dandified YUM): package manager in RHEL 8/9. Replaces YUM. Handles dependencies automatically. Config: /etc/dnf/dnf.conf. Repos in /etc/yum.repos.d/.",
+              "Key DNF commands: install, remove, update (or upgrade), search, info, list (installed/available/all), provides (which package provides a file), history, groupinstall.",
+              "RPM: low-level package tool. `rpm -qa` (query all installed), `rpm -qi package` (info), `rpm -ql package` (list files), `rpm -qf /path/to/file` (what package owns file), `rpm -ivh package.rpm` (install).",
+              "Repositories: defined in /etc/yum.repos.d/*.repo. Each repo has [id], name, baseurl/mirrorlist, enabled, gpgcheck. `dnf repolist` shows enabled repos.",
+              "Module streams: RHEL 8+ AppStream concept. Multiple versions of software. `dnf module list`, `dnf module enable module:stream`, `dnf module install module:stream/profile`.",
+              "dnf history: track all transactions. `dnf history list`, `dnf history info 5`, `dnf history undo 5` (roll back a transaction). Very powerful for troubleshooting.",
+            ],
+            commands: [
+              { cmd: "dnf install httpd -y", desc: "Install httpd without confirmation" },
+              { cmd: "dnf search 'web server'", desc: "Search package descriptions" },
+              { cmd: "dnf provides /usr/bin/vim", desc: "Find which package provides vim" },
+              { cmd: "dnf grouplist", desc: "List available package groups" },
+              { cmd: "dnf groupinstall 'Development Tools'", desc: "Install a package group" },
+              { cmd: "rpm -qf /etc/ssh/sshd_config", desc: "Which package owns sshd_config?" },
+              { cmd: "rpm -ql openssh-server", desc: "List all files in openssh-server package" },
+              { cmd: "dnf history undo last", desc: "Undo last dnf transaction" },
+            ],
+            labs: [
+              "Install httpd: `dnf install httpd`. Start and enable it. Verify it's running. Install vim, wget, net-tools in one command.",
+              "DNF search: find the package that provides the `dig` command. Find the package providing `/etc/cron.d`. Install both.",
+              "Repository lab: add a custom repo (create /etc/yum.repos.d/custom.repo with correct fields). Verify with `dnf repolist`.",
+              "RPM forensics: pick any installed package. Use rpm -ql to list its files. Use rpm -qi to see its description and install date. Use rpm -qR to see its requirements.",
+              "dnf history: install a package, update another, then view the history. Practice `dnf history undo` to roll back your last install.",
+            ],
+            tip: "`dnf provides */command_name` is exam gold — when you need a tool and don't know the package name. Try `dnf provides */semanage`.",
+          },
+          {
+            id: 15, title: "Accessing Linux File Systems", emoji: "💾",
+            summary: [
+              "File systems: ext4 (default/stable), xfs (RHEL default, large scale), vfat (FAT32, compatibility), iso9660 (CD/DVD). Each has different tools and options.",
+              "Mounting: `mount device mountpoint`. Temporary mounts don't survive reboot. Persistent mounts go in /etc/fstab. Format: device mountpoint fstype options dump pass.",
+              "/etc/fstab fields: (1)device/UUID/LABEL, (2)mountpoint, (3)fstype, (4)options (defaults,ro,noexec), (5)dump (0=no backup), (6)pass (0=no fsck, 1=root, 2=others).",
+              "UUID and LABEL: use `blkid` to get UUIDs. Preferred over device names (/dev/sdb1) in fstab because device names can change. `lsblk -f` shows filesystem info.",
+              "Disk tools: `lsblk` (tree view of block devices), `blkid` (UUIDs and types), `df -h` (disk usage), `du -sh /dir` (directory size), `fdisk -l` (partition table).",
+              "Network filesystems: NFS (mount with nfs type), CIFS/SMB (mount with cifs type, need cifs-utils package). Common in enterprises. autofs for automounting.",
+            ],
+            commands: [
+              { cmd: "lsblk -f", desc: "Show block devices with FS type and UUID" },
+              { cmd: "blkid /dev/sdb1", desc: "Show UUID and type of partition" },
+              { cmd: "mount /dev/sdb1 /mnt/data", desc: "Temporarily mount partition" },
+              { cmd: "mount -o remount,ro /mnt/data", desc: "Remount as read-only" },
+              { cmd: "umount /mnt/data", desc: "Unmount (not 'unmount'!)" },
+              { cmd: "df -hT", desc: "Disk usage with filesystem type" },
+              { cmd: "du -sh /var/log/*", desc: "Size of each item in /var/log" },
+              { cmd: "findmnt", desc: "Tree view of all mounts" },
+            ],
+            labs: [
+              "Add a second disk to your VM. Use lsblk to see it. Create a partition with fdisk. Create an ext4 filesystem with mkfs.ext4. Mount it.",
+              "Persistent mount: get the UUID with blkid. Add to /etc/fstab. Test with `mount -a` (mounts all in fstab). Reboot and verify it's still mounted.",
+              "fstab options: add a mount with 'noexec,nosuid,nodev' options. Verify you can't execute files on it.",
+              "Disk usage analysis: find which directories under /var are using the most space with `du -sh /var/* | sort -h`. Clean up if needed.",
+              "Mount a loop device (ISO file): `mount -o loop /path/to/file.iso /mnt/cdrom`. List its contents. Unmount.",
+            ],
+            tip: "fstab mistakes can make your system unbootable! Always test with `mount -a` BEFORE rebooting. If fstab has errors, mount -a will warn you.",
+          },
+          {
+            id: 16, title: "Analyzing Servers and Getting Support", emoji: "🔍",
+            summary: [
+              "System status overview: `top`, `vmstat`, `iostat`, `free -h` (memory), `uptime` (load average), `sar` (historical stats — from sysstat package).",
+              "Red Hat Support tools: sosreport (collects system info for support cases), `redhat-support-tool` CLI, insights-client (proactive analysis). `sos report` in RHEL 9.",
+              "Performance metrics: CPU (`mpstat`), memory (`free -h`, /proc/meminfo), disk I/O (`iostat -x`), network (`ip -s link`, `sar -n DEV`). Understand what 'normal' looks like.",
+              "Troubleshooting methodology: Define problem → Gather info → Form hypothesis → Test → Fix → Verify → Document. Don't guess — use data.",
+              "System logs for troubleshooting: `journalctl -xe` (service failures with explanations), /var/log/messages (general), dmesg (hardware/kernel), /var/log/secure (auth failures).",
+              "Web console (Cockpit): browser-based admin tool. Access at https://hostname:9090. Manage services, storage, networking, users, performance from a GUI.",
+            ],
+            commands: [
+              { cmd: "free -h", desc: "Memory usage (human readable)" },
+              { cmd: "vmstat 2 5", desc: "VM stats every 2 sec, 5 times" },
+              { cmd: "iostat -x 2", desc: "Extended disk I/O stats every 2 sec" },
+              { cmd: "sar -u 1 5", desc: "CPU utilization (need sysstat)" },
+              { cmd: "sos report", desc: "Generate support data bundle" },
+              { cmd: "systemctl enable --now cockpit.socket", desc: "Enable Cockpit web console" },
+              { cmd: "lscpu", desc: "CPU architecture details" },
+              { cmd: "lsmem", desc: "Memory ranges" },
+            ],
+            labs: [
+              "System health check routine: run uptime, free -h, df -h, ip addr, systemctl --failed. Build a one-liner that shows all of them.",
+              "Enable Cockpit: `dnf install cockpit`, enable the socket, open https://localhost:9090. Explore all sections. Manage a service from the GUI.",
+              "Performance baseline: install sysstat (`dnf install sysstat`). Enable it: `systemctl enable --now sysstat`. Run `sar -u 1 10` to see CPU history.",
+              "Simulate a problem: fill disk with `dd if=/dev/zero of=/tmp/bigfile bs=1M count=1000`. Watch `df -h`. Find it with `du`. Delete it.",
+              "Hardware inventory: `lscpu`, `lsmem`, `lsblk`, `lspci`, `lsusb`. Build a complete picture of your VM's hardware from the command line.",
+            ],
+            tip: "`journalctl -xe` is THE command to run first when a service won't start. The -x adds explanations and links to docs. Don't forget it.",
+          },
+        ],
+      },
+      rh134: {
+        label: "RH134",
+        title: "Red Hat System Administration II",
+        color: "#0068B8",
+        accent: "#2090E0",
+        bg: "#000d1a",
+        chapters: [
+          {
+            id: 1, title: "Improving Command Line Productivity", emoji: "⚡",
+            summary: [
+              "Bash loops: `for VAR in LIST; do COMMANDS; done`. `while CONDITION; do COMMANDS; done`. `until CONDITION; do COMMANDS; done`. C-style: `for ((i=0; i<10; i++))`. Loop over files: `for f in /etc/*.conf`.",
+              "Bash conditionals: `if [ condition ]; then ... elif ...; else ...; fi`. Test conditions: -f (file exists), -d (dir exists), -r/-w/-x (readable/writable/executable), -z (string empty), -eq/-ne/-lt/-gt (numeric), == (string equal).",
+              "Bash scripts: shebang `#!/bin/bash`. Variables, arguments ($1, $2, $@, $#, $0). Exit codes: `$?` holds last exit code. `exit N` to set exit code. Functions: `funcname() { ... }`. `local` for local variables.",
+              "Regular expressions: BRE (basic, grep) vs ERE (extended, grep -E, egrep, sed -E, awk). Know: . * ^ $ [] [^] \\b and ERE: + ? | () {n,m}.",
+              "Shell script best practices: always quote variables (\"$VAR\"), use [[ ]] over [ ] for bash conditionals (more robust), set -e (exit on error), set -u (error on unset vars), set -x (debug/trace).",
+              "alias and functions: `alias ll='ls -la'` (put in ~/.bashrc). Functions more powerful — can accept args, have local vars. `type cmdname` tells you if it's alias/function/binary.",
+            ],
+            commands: [
+              { cmd: "for i in {1..10}; do echo $i; done", desc: "Loop 1 to 10" },
+              { cmd: "for f in /etc/*.conf; do echo $f; done", desc: "Loop over config files" },
+              { cmd: "while read line; do echo $line; done < file.txt", desc: "Read file line by line" },
+              { cmd: "[[ -f /etc/hosts ]] && echo exists", desc: "File existence check" },
+              { cmd: "bash -x script.sh", desc: "Debug/trace script execution" },
+              { cmd: "alias grep='grep --color=auto'", desc: "Create alias with default options" },
+            ],
+            labs: [
+              "Script 1: write a script that accepts a username as $1, checks if it exists in /etc/passwd, and creates it if not. Exits with proper exit codes.",
+              "Script 2: loop through all files in /etc. For each .conf file, print its name and line count. Format output neatly.",
+              "Script 3: system health check script. Check disk usage (warn if >80%), check if sshd is running, check if load avg > 2. Email-style output.",
+              "Regex drill: use grep -E to find lines in /etc/passwd where UID is between 1000-9999. Find all IPv4 addresses in /var/log/messages.",
+              "Debug a broken script: take a script with at least 3 bugs. Use `bash -x` and `set -e` to find and fix them.",
+            ],
+            tip: "Always quote your variables: \"$VAR\" not $VAR. Unquoted variables break when values contain spaces. This causes subtle bugs hard to track down.",
+          },
+          {
+            id: 2, title: "Scheduling Future Tasks", emoji: "⏰",
+            summary: [
+              "cron: traditional scheduler. User crontabs: `crontab -e` (edit), `-l` (list), `-r` (remove), `-u user` (root only). System cron: /etc/cron.d/, /etc/cron.daily/, /etc/cron.hourly/.",
+              "Cron syntax: `MIN HOUR DOM MON DOW COMMAND`. Ranges: 1-5, lists: 1,3,5, step: */15 (every 15 min). @reboot (at boot), @daily, @weekly, @monthly shortcuts.",
+              "Cron environment: minimal PATH. Always use FULL PATHS in cron jobs (`/usr/bin/python3`, not `python3`). Set MAILTO='' to disable email. SHELL=/bin/bash.",
+              "at: one-time task scheduling. `at 14:30`, `at now + 2 hours`, `at midnight`. Enter commands, end with Ctrl+D. `atq` (queue), `atrm N` (remove). Requires atd service.",
+              "systemd timers: modern cron alternative. Two units: .timer and .service. `OnCalendar=` for cron-like scheduling. `Persistent=true` runs missed jobs after downtime. `systemctl list-timers`.",
+              "anacron: runs periodic jobs even if system was off during scheduled time. /etc/anacrontab. Used by /etc/cron.daily, weekly, monthly in RHEL.",
+            ],
+            commands: [
+              { cmd: "crontab -e", desc: "Edit current user's crontab" },
+              { cmd: "crontab -l -u alice", desc: "List alice's crontab (as root)" },
+              { cmd: "at now + 30 minutes", desc: "Schedule one-time task" },
+              { cmd: "atq", desc: "List pending at jobs" },
+              { cmd: "systemctl list-timers --all", desc: "List all systemd timers" },
+              { cmd: "systemd-analyze calendar 'Mon *-*-* 09:00:00'", desc: "Validate timer expression" },
+            ],
+            labs: [
+              "cron lab: as a regular user, create a crontab that runs a backup script every day at 2 AM. Also run it at every reboot. Verify with `crontab -l`.",
+              "System cron: create /etc/cron.d/cleanup with a job that clears /tmp/*.tmp files daily at 3 AM as root. Include proper env vars.",
+              "at scheduling: schedule a command to run 5 minutes from now. Verify it's queued with atq. Let it run and check output file.",
+              "systemd timer: create a .service unit and .timer unit to replace a cron job. Use `OnCalendar=daily`. Enable and start the timer.",
+              "Cron debugging: a cron job works on command line but fails via cron. Debug by checking: PATH in crontab, absolute paths, MAILTO to capture errors.",
+            ],
+            tip: "Cron jobs fail most often because of PATH issues. Always add `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin` at the top of your crontab.",
+          },
+          {
+            id: 3, title: "Tuning System Performance", emoji: "📊",
+            summary: [
+              "tuned: daemon that applies performance profiles. `tuned-adm list` (available profiles), `tuned-adm active` (current), `tuned-adm profile profile-name`. Profiles: balanced, performance, powersave, throughput-performance, latency-performance, virtual-guest.",
+              "Performance profiles explained: throughput-performance (max throughput, no power saving), latency-performance (low latency), virtual-guest (VMs), desktop, network-latency, network-throughput.",
+              "nice/renice: process priority -20 (highest) to +19 (lowest). Regular users: only increase nice (lower priority). Root: any value. `renice -n 5 -p PID`. `nice -n 10 command`.",
+              "systemd resource control: CPUWeight, MemoryMax, IOWeight in unit files or `systemctl set-property`. cgroups v2 backend. `systemd-cgls` and `systemd-cgtop` to view.",
+              "Performance analysis tools: top, htop, vmstat, iostat, sar, pidstat. Identify CPU-bound vs I/O-bound processes. Look for high %wa (I/O wait) in top.",
+              "CPU governors (via tuned): performance (max freq), powersave (min freq), ondemand (dynamic). tuned handles these automatically based on profile.",
+            ],
+            commands: [
+              { cmd: "tuned-adm list", desc: "List all tuned profiles" },
+              { cmd: "tuned-adm profile throughput-performance", desc: "Apply throughput profile" },
+              { cmd: "tuned-adm recommend", desc: "Get recommended profile for this system" },
+              { cmd: "nice -n -10 ./highprio.sh", desc: "Run with high priority (requires root for negative)" },
+              { cmd: "renice -n 15 -p $(pgrep firefox)", desc: "Lower Firefox priority" },
+              { cmd: "systemctl set-property httpd.service MemoryMax=512M", desc: "Limit httpd memory" },
+              { cmd: "systemd-cgtop", desc: "Real-time cgroup resource usage" },
+            ],
+            labs: [
+              "tuned walkthrough: check current profile, list all profiles, switch to 'throughput-performance', verify change, switch back to 'balanced'.",
+              "Create a custom tuned profile: copy /usr/lib/tuned/balanced to /etc/tuned/myprofile. Add a custom kernel parameter. Apply with tuned-adm.",
+              "Nice values lab: run two CPU-intensive processes with different nice values. Observe in top how CPU time is distributed.",
+              "systemd resource limits: limit httpd to 256MB RAM and 20% CPU. Test by stressing the service. Verify limits with `systemctl status httpd`.",
+              "Performance profiling: under load, identify which process is causing I/O wait (high %wa in top). Use `iostat -x` to identify the disk and `iotop` to find the process.",
+            ],
+            tip: "The exam will ask you to set a specific tuned profile. Know `tuned-adm profile NAME` and `tuned-adm active` to verify. It's a quick point!",
+          },
+          {
+            id: 4, title: "Managing SELinux Security", emoji: "🛡️",
+            summary: [
+              "SELinux: Mandatory Access Control (MAC) — rules applied BY THE SYSTEM, not just by owner. Three modes: Enforcing (enforces policy), Permissive (logs but doesn't enforce), Disabled (off, avoid!).",
+              "Contexts: every file and process has a context. Format: user:role:type:level. The TYPE is most important for day-to-day work. `ls -Z` (files), `ps -Z` (processes), `id -Z` (current user).",
+              "Context management: `chcon -t TYPE file` (temporary, lost on relabel), `semanage fcontext -a -t TYPE '/path(/.*)?'` + `restorecon -Rv /path` (PERMANENT). Use semanage for persistence.",
+              "Booleans: on/off switches for policy rules. `getsebool -a` (list all), `setsebool boolean on/off` (temporary), `setsebool -P boolean on/off` (PERSISTENT). `semanage boolean -l` (with descriptions).",
+              "Ports: SELinux also controls which ports services can use. `semanage port -l | grep http` (list ports). `semanage port -a -t http_port_t -p tcp 8080` (add port). Required when changing service port.",
+              "Troubleshooting: `ausearch -m avc -ts recent` (recent denials), `sealert -a /var/log/audit/audit.log` (human-readable explanations with fix suggestions), `audit2allow -w -a` (suggested fixes).",
+            ],
+            commands: [
+              { cmd: "getenforce", desc: "Show current SELinux mode" },
+              { cmd: "setenforce 0", desc: "Temporary permissive (debugging only!)" },
+              { cmd: "setenforce 1", desc: "Restore enforcing mode" },
+              { cmd: "ls -Z /var/www/html/", desc: "Show SELinux context of web files" },
+              { cmd: "semanage fcontext -a -t httpd_sys_content_t '/web(/.*)?'", desc: "Set permanent context for /web" },
+              { cmd: "restorecon -Rv /web/", desc: "Apply contexts from policy" },
+              { cmd: "setsebool -P httpd_can_network_connect on", desc: "Allow httpd network connections (persistent)" },
+              { cmd: "semanage port -a -t http_port_t -p tcp 8888", desc: "Allow httpd on port 8888" },
+              { cmd: "ausearch -m avc -ts today", desc: "Show today's SELinux denials" },
+            ],
+            labs: [
+              "SELinux mode: check with getenforce. View /etc/selinux/config to see persistent setting. Know what's in that file (SELINUX= and SELINUXTYPE=).",
+              "Web file context: create /webdata/index.html. Serve it with httpd. It fails (wrong context). Fix by running semanage + restorecon. Verify it works.",
+              "Boolean lab: httpd can't connect to a database. Find the relevant boolean: `getsebool -a | grep httpd`. Enable it persistently. Test.",
+              "Port relabeling: configure sshd to use port 2222. Without the semanage port command, it fails. Add the port context and verify ssh works on 2222.",
+              "Denial analysis: deliberately trigger an SELinux denial. Use ausearch to find the AVC message. Use audit2allow to understand what's needed. Fix properly with semanage/setsebool.",
+            ],
+            tip: "NEVER set SELinux to Disabled on a production system. Permissive for DEBUGGING only, always return to Enforcing. The exam tests that you can fix SELinux issues without disabling it.",
+          },
+          {
+            id: 5, title: "Managing Logical Volumes", emoji: "🗄️",
+            summary: [
+              "LVM stack: Physical Volume (PV) → Volume Group (VG) → Logical Volume (LV). PVs are real disks/partitions. VG pools PVs. LVs are virtual partitions carved from VG.",
+              "PV commands: `pvcreate /dev/sdb` (init), `pvs` (list), `pvdisplay` (details), `pvremove` (remove). VG: `vgcreate myvg /dev/sdb` (create), `vgs`, `vgdisplay`, `vgextend myvg /dev/sdc` (add PV).",
+              "LV commands: `lvcreate -n mylv -L 10G myvg` (size) or `-l 100%FREE` (all free). `lvs`, `lvdisplay`, `lvremove`. Path: /dev/myvg/mylv or /dev/mapper/myvg-mylv.",
+              "Extending LVs online (no unmount!): `lvextend -L +5G /dev/myvg/mylv` (extend LV). Then grow filesystem: ext4: `resize2fs /dev/myvg/mylv`, xfs: `xfs_growfs /mountpoint`.",
+              "Reducing LVs: ONLY ext4 (NOT xfs!). Must unmount. `e2fsck -f device`, `resize2fs device 8G`, `lvreduce -L 8G /dev/myvg/mylv`. Risky — always backup first!",
+              "LVM snapshots: `lvcreate -s -n snap -L 1G /dev/myvg/datalv`. Used for backups. Mount snapshot, backup, remove: `lvremove /dev/myvg/snap`.",
+            ],
+            commands: [
+              { cmd: "pvcreate /dev/sdb /dev/sdc", desc: "Initialize two disks as PVs" },
+              { cmd: "vgcreate datavg /dev/sdb /dev/sdc", desc: "Create VG from two PVs" },
+              { cmd: "lvcreate -n datalv -L 20G datavg", desc: "Create 20GB LV" },
+              { cmd: "mkfs.xfs /dev/datavg/datalv", desc: "Format LV with XFS" },
+              { cmd: "lvextend -L +10G -r /dev/datavg/datalv", desc: "Extend LV AND resize filesystem (-r)" },
+              { cmd: "vgextend datavg /dev/sdd", desc: "Add new disk to VG" },
+              { cmd: "lvcreate -s -n snap0 -L 2G /dev/datavg/datalv", desc: "Create LVM snapshot" },
+            ],
+            labs: [
+              "Build full LVM stack: add 3 virtual disks to your VM. Create PVs, one VG called 'corpvg', two LVs: 'data' (10GB, xfs) and 'logs' (5GB, ext4). Mount both persistently.",
+              "Online resize: with 'data' LV mounted and in use, extend it by 5GB. Use `lvextend -r` (with -r it resizes filesystem too). Verify df -h shows new size.",
+              "VG extension: add a 4th disk. Create a PV from it. Use vgextend to add it to corpvg. Verify with vgs that total capacity increased.",
+              "Snapshot backup lab: take a snapshot of a mounted LV. Mount the snapshot (read-only). Back up files from the snapshot. Remove the snapshot.",
+              "Full workflow from scratch: from empty disk to formatted, mounted, fstab-persisted LV — do it from memory in under 10 minutes. Time yourself.",
+            ],
+            tip: "`lvextend -r` extends AND resizes the filesystem in one command. Without -r, you must manually run resize2fs or xfs_growfs — and forgetting this is a common exam mistake.",
+          },
+          {
+            id: 6, title: "Advanced Storage Features", emoji: "⚙️",
+            summary: [
+              "Stratis: RHEL 8+ storage management. Pooled storage like LVM but simpler. Thin provisioning by default. Components: pool (like VG) → filesystem (like LV). `stratisd` daemon required.",
+              "Stratis commands: `stratis pool create pool1 /dev/sdb`, `stratis fs create pool1 fs1`, mount at /stratis/pool1/fs1. Add disks: `stratis pool add-data pool1 /dev/sdc`.",
+              "VDO (Virtual Data Optimizer): deduplication + compression storage layer. Reduces storage footprint. `vdo create --name=myvdo --device=/dev/sdb --vdoLogicalSize=50G`. Mount the /dev/mapper/myvdo device.",
+              "LUKS encryption: block-level encryption. `cryptsetup luksFormat /dev/sdb1` (WARNS YOU), `cryptsetup luksOpen /dev/sdb1 mydata`, use /dev/mapper/mydata as normal device, `cryptsetup luksClose mydata`.",
+              "Auto-unlock at boot with LUKS: add to /etc/crypttab (name device keyfile/none options), add to /etc/fstab. Without keyfile, prompts for passphrase at boot.",
+              "NFS server configuration: `dnf install nfs-utils`, define exports in /etc/exports (`/data client(rw,sync,no_root_squash)`), `exportfs -av` to apply, enable nfs-server, allow through firewall.",
+            ],
+            commands: [
+              { cmd: "stratis pool create mypool /dev/sdb", desc: "Create Stratis pool" },
+              { cmd: "stratis fs create mypool myfs", desc: "Create Stratis filesystem" },
+              { cmd: "cryptsetup luksFormat /dev/sdb1", desc: "Encrypt partition with LUKS" },
+              { cmd: "cryptsetup luksOpen /dev/sdb1 secretdata", desc: "Open encrypted device" },
+              { cmd: "cryptsetup luksAddKey /dev/sdb1", desc: "Add additional passphrase slot" },
+              { cmd: "exportfs -av", desc: "Apply NFS exports" },
+              { cmd: "showmount -e nfsserver", desc: "Show NFS exports from server" },
+            ],
+            labs: [
+              "Stratis lab: create a Stratis pool with one disk. Create two filesystems. Mount both. Add a second disk to the pool. Observe it's immediately available.",
+              "LUKS encryption: create an encrypted partition, open it, format with ext4, mount it. Add a file. Close it. Reopen with passphrase. Verify file is there.",
+              "LUKS auto-mount: configure /etc/crypttab and /etc/fstab so the encrypted volume mounts at boot with a keyfile stored at /etc/luks-key. Test by rebooting.",
+              "NFS server: export /srv/nfsshare from one VM. Mount it on another VM using fstab with NFS options (rw,sync). Create a file from the client and verify on server.",
+              "NFS Kerberos: understand the difference between `sec=sys` (UID-based, default) and `sec=krb5` (Kerberos). Know when each is appropriate.",
+            ],
+            tip: "Stratis filesystem sizes are shown as large/unlimited because of thin provisioning. The actual data size is the pool size. Don't be confused by `df` output.",
+          },
+          {
+            id: 7, title: "Controlling the Boot Process", emoji: "🔄",
+            summary: [
+              "Boot sequence: BIOS/UEFI → GRUB2 bootloader → Linux kernel + initramfs → systemd (PID 1) → default target. Each stage can be interrupted for recovery.",
+              "GRUB2: bootloader stored in MBR (BIOS) or EFI partition (UEFI). Config: /boot/grub2/grub.cfg (NEVER edit directly). Edit /etc/default/grub + run `grub2-mkconfig`.",
+              "GRUB2 /etc/default/grub key options: GRUB_TIMEOUT (countdown seconds), GRUB_CMDLINE_LINUX (kernel parameters appended to all entries), GRUB_DEFAULT (default entry index).",
+              "Kernel parameters: added at end of linux line in GRUB. Common: `rd.break` (break before root mount — password reset), `init=/bin/bash` (bash as PID 1), `systemd.unit=rescue.target`.",
+              "Root password reset procedure: interrupt GRUB → add `rd.break` → at initramfs shell: `mount -o remount,rw /sysroot`, `chroot /sysroot`, `passwd root`, `touch /.autorelabel`, exit, exit.",
+              "systemd rescue and emergency: rescue.target (mounts filesystems, minimal services, root password required), emergency.target (only root FS read-only, most minimal, for major issues).",
+            ],
+            commands: [
+              { cmd: "grub2-mkconfig -o /boot/grub2/grub.cfg", desc: "Regenerate GRUB config (BIOS)" },
+              { cmd: "grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg", desc: "Regenerate GRUB config (UEFI)" },
+              { cmd: "grubby --default-kernel", desc: "Show default kernel" },
+              { cmd: "grubby --update-kernel=ALL --args='quiet'", desc: "Add kernel param to all entries" },
+              { cmd: "systemctl rescue", desc: "Enter rescue mode (from running system)" },
+              { cmd: "systemctl emergency", desc: "Enter emergency mode (from running system)" },
+            ],
+            labs: [
+              "Root password reset: this is a CRITICAL exam skill. Practice it 5 times. Boot VM, interrupt GRUB, add rd.break, reset root password, touch /.autorelabel, reboot.",
+              "GRUB timeout: change GRUB_TIMEOUT to 10 seconds. Add 'quiet' to kernel parameters. Regenerate grub.cfg. Reboot and verify.",
+              "Boot target at GRUB: add `systemd.unit=emergency.target` to kernel line at GRUB. Boot into emergency mode. Remount root read-write. Return to normal boot.",
+              "Kernel parameters: use grubby to add 'crashkernel=auto' to the default kernel. Verify it appears in /boot/grub2/grub.cfg.",
+              "Multi-kernel: if you have multiple kernels installed, practice switching default with grubby. Always know how to boot an older kernel from the GRUB menu.",
+            ],
+            tip: "Root password reset is almost ALWAYS on the RHCSA exam. The rd.break method works. Know it cold: interrupt GRUB → rd.break → chroot → passwd → autorelabel → exit.",
+          },
+          {
+            id: 8, title: "Managing Network Security", emoji: "🔥",
+            summary: [
+              "firewalld: dynamic firewall daemon using zones and services. Default zone: public. Zones define trust level. Services are predefined port/protocol sets in /usr/lib/firewalld/services/.",
+              "firewall-cmd key commands: --list-all (show zone config), --add-service=ssh (allow SSH), --add-port=8080/tcp (allow port), --remove-service= (block), --zone=ZONE (target zone), --permanent (persist), --reload (apply permanent changes).",
+              "Always use BOTH: `--permanent` + `--reload`, OR use `--runtime-to-permanent` to save current runtime config. Without --permanent, rules lost after reload/reboot.",
+              "Zones: drop (deny all), block (reject all), public (default, limited), external (masquerading), dmz (some services allowed), work/home/internal (trusted), trusted (allow all).",
+              "Rich rules: more complex than service/port rules. `firewall-cmd --add-rich-rule='rule family=ipv4 source address=192.168.1.0/24 service name=ssh accept'`. Log, limit, forward with rich rules.",
+              "TCP Wrappers: /etc/hosts.allow and /etc/hosts.deny. Older mechanism, still relevant for some services. ALL:ALL in hosts.deny + specific allows in hosts.allow.",
+            ],
+            commands: [
+              { cmd: "firewall-cmd --state", desc: "Check firewalld status" },
+              { cmd: "firewall-cmd --list-all", desc: "Show current zone configuration" },
+              { cmd: "firewall-cmd --add-service=https --permanent", desc: "Permanently allow HTTPS" },
+              { cmd: "firewall-cmd --add-port=8080/tcp --permanent", desc: "Permanently allow port 8080" },
+              { cmd: "firewall-cmd --reload", desc: "Apply permanent rules to runtime" },
+              { cmd: "firewall-cmd --zone=trusted --add-source=192.168.1.0/24 --permanent", desc: "Trust entire subnet" },
+              { cmd: "firewall-cmd --remove-service=dhcpv6-client --permanent", desc: "Remove a service from zone" },
+              { cmd: "firewall-cmd --list-all-zones", desc: "Show all zones and their rules" },
+            ],
+            labs: [
+              "Firewall baseline: check default zone and what's allowed. Remove dhcpv6-client if not needed. List all permanent rules.",
+              "Add services: permanently allow http, https, and custom port 8443/tcp. Reload. Verify with --list-all. Test connectivity from another host.",
+              "Zone lab: change your NIC to the 'internal' zone (more trusted). Add a source subnet (192.168.0.0/24) to the trusted zone. Verify zone assignments.",
+              "Rich rules: block all traffic from a specific IP. Allow SSH only from your management subnet. Log and limit new connections to prevent brute force.",
+              "Firewall + SELinux: deploy a web app on port 8080. You need BOTH `firewall-cmd --add-port=8080/tcp` AND `semanage port -a -t http_port_t -p tcp 8080`. Both must be done!",
+            ],
+            tip: "ALWAYS remember the two-step: `--permanent` to save, `--reload` to apply. Or use `firewall-cmd --runtime-to-permanent` to save the current live state. Forgetting reload = config lost on reboot.",
+          },
+          {
+            id: 9, title: "Installing Red Hat Enterprise Linux", emoji: "💿",
+            summary: [
+              "Kickstart: automated RHEL installation using answer file. Anaconda installer reads the .ks file and answers all prompts automatically. Generated by Anaconda from a manual install: /root/anaconda-ks.cfg.",
+              "Kickstart file sections: %pre (pre-install scripts), commands (lang, keyboard, network, rootpw, bootloader, autopart, packages), %packages (package list), %post (post-install scripts), %end.",
+              "Kickstart delivery methods: HTTP/HTTPS, FTP, NFS, local disk, CD/DVD. Referenced at boot via `inst.ks=http://server/ks.cfg` kernel parameter.",
+              "Kickstart validation: `ksvalidator kickstart.ks` (from pykickstart package). Checks syntax. Not all semantic errors caught — test in a VM.",
+              "PXE boot: network boot for mass deployment. Components: DHCP (gives IP + next-server + filename), TFTP (serves PXE bootloader), HTTP/NFS (serves installer). Complex but powerful for automation.",
+              "Anaconda: the RHEL installer. Text mode (`inst.text`), VNC mode (`inst.vnc`), GUI mode (default). Key sections: Installation source, Software selection, Partitioning, Network, User/root setup.",
+            ],
+            commands: [
+              { cmd: "ksvalidator /root/anaconda-ks.cfg", desc: "Validate kickstart file syntax" },
+              { cmd: "cat /root/anaconda-ks.cfg", desc: "View auto-generated kickstart from last install" },
+              { cmd: "openssl passwd -6 'password'", desc: "Generate SHA-512 hashed password for kickstart" },
+              { cmd: "inst.ks=http://192.168.1.1/ks.cfg", desc: "Kernel parameter to specify kickstart" },
+            ],
+            labs: [
+              "Find and review /root/anaconda-ks.cfg — this is the kickstart from your installation. Understand each section: what it configures.",
+              "Modify the kickstart: change rootpw, add user creation, add packages (vim, httpd), add %post section to start and enable httpd. Validate with ksvalidator.",
+              "Use the modified kickstart to install a new VM. Verify the post-install configuration is correct.",
+              "Kickstart network install: serve your .ks file via `python3 -m http.server 8080`. Point a new VM installation to http://yourIP:8080/ks.cfg.",
+              "Understand the %packages syntax: install groups with @groupname, exclude packages with -package. Know how to install everything vs minimal.",
+            ],
+            tip: "The exam may ask you to create or modify a kickstart. Know the basic structure, the %packages section, and the %post section for post-install config.",
+          },
+          {
+            id: 10, title: "Comprehensive Review", emoji: "🎓",
+            summary: [
+              "RHCSA exam format: 3 hours, 15-20 tasks, live RHEL system, no internet access (man pages available). Graded automatically after submission. 210/300 points to pass.",
+              "High-value exam objectives: user/group management, file permissions + ACLs, SELinux (contexts, booleans, ports), LVM management, systemd services, cron/timers, networking (nmcli), firewalld, NFS mounts.",
+              "Root password reset: appears on nearly every exam attempt. rd.break method is the standard approach. Practice until it takes under 5 minutes.",
+              "Time management: read ALL questions first. Start with ones you're most confident about. Don't spend more than 10-15 min on any single task. Come back to hard ones.",
+              "Verification: after each task, VERIFY it works. Start the service, check the port, test the permission, try to log in. Tasks that partially work still get partial credit.",
+              "Common mistakes: forgetting `--permanent` + `--reload` for firewalld, forgetting `usermod -aG` vs `usermod -G`, forgetting to `restorecon` after semanage fcontext, not rebooting to test persistence.",
+            ],
+            commands: [
+              { cmd: "systemctl list-units --failed", desc: "First thing to check: what's broken?" },
+              { cmd: "journalctl -xe", desc: "Debug service failures" },
+              { cmd: "firewall-cmd --list-all", desc: "Firewall quick status" },
+              { cmd: "lvs && vgs && pvs", desc: "LVM quick status" },
+              { cmd: "nmcli con show && ip addr", desc: "Network quick status" },
+              { cmd: "df -h && lsblk", desc: "Storage quick status" },
+            ],
+            labs: [
+              "FULL MOCK EXAM 1: Set hostname, configure static IP, create 3 users with specific UIDs/passwords, configure sudo, set up an NFS mount, extend an LV, fix an SELinux issue.",
+              "FULL MOCK EXAM 2: Reset root password, enable services to survive reboot, configure firewalld for specific services, create cron jobs, set up ACLs on shared directories.",
+              "Speed drill: configure a user, group, sudo, and password policy — under 3 minutes. Do it 10 times until muscle memory.",
+              "SELinux troubleshooting drill: deliberately break SELinux (wrong context, wrong boolean, wrong port). Debug and fix without using setenforce 0.",
+              "Time yourself on each exam objective. Identify your three slowest areas. Focus extra practice there in the week before the exam.",
+            ],
+            tip: "The RHCSA is about speed AND accuracy. You can know everything and still fail if you're slow. Practice each task type until it's automatic — not just until you CAN do it.",
+          },
+        ],
+      },
+      rh199: {
+        label: "RH199",
+        title: "RHCSA Rapid Track & Exam Prep",
+        color: "#00A86B",
+        accent: "#00C880",
+        bg: "#001a0d",
+        chapters: [
+          {
+            id: 1, title: "Exam Strategy and Environment", emoji: "🎯",
+            summary: [
+              "RH199 assumes you have Linux experience. It covers both RH124 and RH134 objectives at accelerated pace. Focus is on RHCSA exam readiness, not conceptual learning.",
+              "Exam environment: two RHEL 9 VMs, 3 hours, 15-20 tasks. VM1 is primary system, VM2 may be needed for multi-host tasks (NFS, SSH). No internet, man pages available.",
+              "Point values: tasks range from 3-15 points. Total 300 points, pass at 210 (70%). Partial credit possible. Uncompleted tasks score 0 even if you started.",
+              "Setup your lab: install RHEL 9 (free developer subscription at developers.redhat.com). Use VirtualBox or KVM with at least 2 VMs, each with 2 extra disks for storage practice.",
+              "Priority objectives (most tested): user/group management, file permissions/ACLs, SELinux, LVM, systemd, networking (nmcli, firewalld), boot/password reset, cron, NFS.",
+              "Study schedule for rapid track: 2 weeks intensive. Week 1: master all RH124 topics. Week 2: all RH134 topics. Final 3 days: only mock exams and speed drilling.",
+            ],
+            commands: [
+              { cmd: "subscription-manager register", desc: "Register for developer RHEL" },
+              { cmd: "subscription-manager attach --auto", desc: "Auto-attach subscription" },
+              { cmd: "dnf repolist", desc: "Verify repos are enabled" },
+              { cmd: "dnf install vim bash-completion tmux net-tools", desc: "Install useful exam tools" },
+              { cmd: "systemctl enable --now sshd", desc: "Ensure SSH is running" },
+            ],
+            labs: [
+              "Set up your lab environment: 2 RHEL 9 VMs, each with 20GB disk + 2 extra 10GB disks. Configure static IPs on a host-only network. Test SSH between them.",
+              "Install useful packages on both VMs: vim, tmux, bash-completion, net-tools, tree, wget, curl. Enable bash-completion in /etc/profile.d/.",
+              "Map out exam objectives: print the Red Hat RHCSA exam objectives list. For each objective, rate yourself 1-5. Focus study time on anything rated 3 or below.",
+              "Practice the lab reset workflow: after each practice session, reset the VMs to snapshot. Practice restoring quickly so you can re-run scenarios.",
+              "Set up tmux for the exam: practice using split panes — one for work, one for monitoring (journalctl -f, top). This simulates efficient exam work.",
+            ],
+            tip: "Take a VM snapshot BEFORE each practice scenario. This lets you reset and repeat. Repetition until tasks are automatic is the entire strategy for this exam.",
+          },
+          {
+            id: 2, title: "Essential File & Text Operations", emoji: "📄",
+            summary: [
+              "Critical find patterns for the exam: find by permission `-perm /4000` (SUID), by owner `-user alice`, by size `-size +10M`, by time `-mtime -1` (last day), by type `-type f/d/l`.",
+              "find -exec: `find /etc -name '*.conf' -exec grep -l 'ServerName' {} \\;` — find configs mentioning ServerName. `+` instead of `\\;` batches args (faster).",
+              "Text processing pipeline patterns: extract columns `awk -F: '{print $1,$3}' /etc/passwd`, filter `grep -v '^#'`, sort `sort -t: -k3 -n` (sort by UID numerically), unique `sort | uniq -c | sort -rn`.",
+              "sed for file editing in scripts: `sed -i 's/disabled/enabled/g' file` (in-place), `sed -n '/START/,/END/p' file` (print between patterns), `sed '/^$/d'` (delete blank lines).",
+              "vim speed moves: gg (top), G (bottom), :50 (go to line 50), / then n/N (search), * (search word under cursor), cw (change word), . (repeat last command), % (jump to matching bracket).",
+              "Here documents for file creation in scripts: heredoc syntax allows multi-line file creation without interactive editor — essential for scripting exam tasks.",
+            ],
+            commands: [
+              { cmd: "find / -user alice -type f -exec cp {} /backup/ \\;", desc: "Copy all alice's files to /backup" },
+              { cmd: "find /var -size +10M -ls", desc: "Show large files with details" },
+              { cmd: "grep -rn 'FAILED' /var/log/ 2>/dev/null | wc -l", desc: "Count failure log entries" },
+              { cmd: "awk -F: '$3 >= 1000 {print $1}' /etc/passwd", desc: "List normal user accounts" },
+              { cmd: "sed -n '10,20p' /etc/passwd", desc: "Print lines 10-20" },
+              { cmd: "sort -t: -k3 -n /etc/passwd | tail -5", desc: "Top 5 highest UIDs" },
+            ],
+            labs: [
+              "find challenge: find all files in /etc modified in the last 7 days that are owned by root and are regular files. Copy them to /tmp/recent-etc/.",
+              "Text processing: from /etc/passwd, extract all users with UID >= 1000, sort by UID descending, print username:UID:shell. Use a single pipeline.",
+              "sed editing: in a copy of /etc/ssh/sshd_config, uncomment the 'PermitRootLogin' line and change its value to 'no'. Do it with a single sed -i command.",
+              "vim speed drill: open a 100-line file. Using ONLY vim commands (no arrow keys, no mouse), go to line 47, delete 3 lines, go to the last line, copy it, paste 5 lines above the first occurrence of 'error'.",
+              "Script: write a script that reads /etc/passwd, and for each user with UID >= 1000, checks if their home directory exists. Reports any missing home directories.",
+            ],
+            tip: "On the exam, when you need to find something in a config file, use: `grep -n 'pattern' file` to find the line number, then `:NUMBER` in vim to jump directly to it.",
+          },
+          {
+            id: 3, title: "User, Group & Permission Mastery", emoji: "🔐",
+            summary: [
+              "Exam user tasks: create with specific UID/GID, set expiry, force password change, lock/unlock, add to groups, configure shell. Do all of this without interactive prompts.",
+              "One-liner user creation: `useradd -u 1500 -g primarygroup -G suppgroup1,suppgroup2 -m -s /bin/bash -c 'Full Name' -e 2024-12-31 username && echo 'password' | passwd --stdin username`.",
+              "ACL precision: set user ACL (`setfacl -m u:alice:rwx`), group ACL (`setfacl -m g:devs:rx`), default ACL (`setfacl -m d:u:alice:rwx dir` — applies to NEW files), remove all (`setfacl -b`). Recursive: `-R`.",
+              "Permission scenarios: shared directory (SGID for group inheritance + sticky for user isolation), web server files (world-readable = 644/755), private SSH keys (600 for key, 700 for .ssh dir).",
+              "chage in scripts: `chage -M 90 -W 14 -I 7 -E 2025-01-01 username` — all in one command. `chage -d 0 username` — force change at next login.",
+              "sudo edge cases: `%group ALL=(ALL) NOPASSWD: /usr/bin/systemctl` — group sudo without password for specific command. `Cmnd_Alias RESTART = /usr/bin/systemctl restart *` for command aliases.",
+            ],
+            commands: [
+              { cmd: "echo 'RedHat1!' | passwd --stdin alice", desc: "Set password non-interactively" },
+              { cmd: "useradd -u 2000 -g 2000 -G wheel,devs -m -s /bin/bash alice", desc: "Full useradd one-liner" },
+              { cmd: "groupadd -g 3000 projectteam", desc: "Create group with specific GID" },
+              { cmd: "setfacl -Rm u:alice:rX,d:u:alice:rX /project", desc: "Set and default ACL recursively" },
+              { cmd: "chage -l alice", desc: "View all password aging info for alice" },
+              { cmd: "usermod -aG wheel,devs,ops alice", desc: "Add alice to multiple groups at once" },
+            ],
+            labs: [
+              "USER BATCH CREATION: Create these users from memory: ops1 (UID 2001, group ops, sudo without password), dev1 (UID 2002, group devs), mgr1 (UID 2003, both groups, password expires in 30 days).",
+              "PERMISSIONS SCENARIO: /projects/teamA/ should be accessible by group 'teamA' members (rwx), new files should inherit group ownership (SGID), users can't delete others' files (sticky). Set it up.",
+              "ACL SCENARIO: /data/reports/ is owned by root. alice needs full access, bob needs read-only, carol needs no access despite being in the same group. Configure with ACLs.",
+              "SUDO SCENARIO: %ops group can run `/usr/bin/systemctl` with no password, `/usr/sbin/useradd` requires password. alice (in devs) can run everything as root, with password.",
+              "VERIFICATION DRILL: for each task above, verify by actually testing as that user. `su - alice`, try to access files, run sudo commands. If it doesn't work, fix it.",
+            ],
+            tip: "The exam checks your work by running test scripts AS the users you configure. Permissions must ACTUALLY work, not just look right. Always test by switching to the configured user.",
+          },
+          {
+            id: 4, title: "SELinux Deep Dive", emoji: "🛡️",
+            summary: [
+              "SELinux workflow for any problem: 1) Check if SELinux is causing it (`ausearch -m avc -ts recent`), 2) Read the denial, 3) Fix with semanage/setsebool/semanage port, 4) Test, 5) Never use setenforce 0 as fix.",
+              "Web server SELinux: files need `httpd_sys_content_t` (read-only) or `httpd_sys_rw_content_t` (read-write). CGI scripts need `httpd_sys_script_exec_t`. Non-standard ports need `semanage port`.",
+              "Context loss situations: cp PRESERVES context, mv PRESERVES context, cp --no-preserve=context LOSES context, creating new file LOSES context (gets parent dir context). restorecon fixes it.",
+              "SELinux users: unconfined_u (root+normal users, default), system_u (services), sysadm_u (admins). Most exam tasks involve FILE and PORT context, not user mapping.",
+              "Troubleshooting toolkit: `ausearch -m avc -ts today | audit2allow -M mymodule` creates a custom module (last resort). `sealert -a /var/log/audit/audit.log` gives human-friendly analysis.",
+              "semanage fcontext patterns: `/web(/.*)?` matches /web and everything inside. Always use this regex pattern. The `?` makes the sub-path optional (matches /web itself too).",
+            ],
+            commands: [
+              { cmd: "semanage fcontext -l | grep '/var/www'", desc: "See what contexts are defined for /var/www" },
+              { cmd: "semanage fcontext -a -t httpd_sys_content_t '/mysite(/.*)?'", desc: "Define context for /mysite recursively" },
+              { cmd: "restorecon -Rv /mysite/", desc: "Apply defined contexts to files" },
+              { cmd: "getsebool -a | grep httpd | grep -v off", desc: "Show only enabled httpd booleans" },
+              { cmd: "semanage port -l | grep ssh", desc: "What ports can SSH use?" },
+              { cmd: "semanage port -a -t ssh_port_t -p tcp 2222", desc: "Allow SSH on port 2222" },
+              { cmd: "ausearch -m avc -ts recent 2>/dev/null | tail -20", desc: "Recent SELinux denials" },
+            ],
+            labs: [
+              "WEB CONTEXT LAB: Create /webfiles/. Copy an HTML file there. Configure httpd to serve from /webfiles/. It will fail — fix with semanage + restorecon. Document every step.",
+              "PORT LAB: Change sshd to port 2222. Without semanage port, it fails. Add the port context. Reload sshd. Test. Also update firewalld to allow 2222.",
+              "BOOLEAN LAB: Enable httpd to send emails (httpd_can_sendmail boolean). Enable it to connect to a database (httpd_can_network_connect_db). Enable persistently.",
+              "DIAGNOSIS LAB: Break SELinux contexts on 3 different files. Use ausearch and sealert to diagnose. Fix each one properly without looking at answers.",
+              "RECOVERY LAB: System won't boot due to /.autorelabel loop. Practice interrupting boot, going to emergency shell, manually fixing context issues.",
+            ],
+            tip: "For the exam, if something doesn't work and there's no obvious reason: CHECK SELinux. Run `ausearch -m avc -ts recent`. 9 times out of 10 if it's not permissions, it's SELinux.",
+          },
+          {
+            id: 5, title: "LVM and Storage Speed Run", emoji: "🗄️",
+            summary: [
+              "LVM EXAM WORKFLOW: add disk → pvcreate → vgcreate (or vgextend) → lvcreate → mkfs → mkdir mountpoint → mount → add to fstab → mount -a to test → verify df -h.",
+              "Critical LVM flags: `lvcreate -L 10G` (exact size), `lvcreate -l 100%VG` (100% of VG), `lvcreate -l 50%FREE` (50% of free space), `lvcreate -l +100%FREE` for lvextend.",
+              "lvextend -r: the -r flag resizes the filesystem automatically. Without it: ext4 needs `resize2fs`, xfs needs `xfs_growfs /mountpoint` (uses mount point, not device). XFS: grow only, no shrink.",
+              "Swap LVM: `lvcreate -n swap -L 2G vgname`, `mkswap /dev/vgname/swap`, `swapon /dev/vgname/swap`. fstab: `/dev/vgname/swap none swap defaults 0 0`.",
+              "Stratis quick setup: `dnf install stratisd stratis-cli`, enable stratisd, `stratis pool create name /dev/sdb`, `stratis fs create name fsname`, mount at `/stratis/name/fsname`.",
+              "VDO quick setup: `dnf install vdo kmod-kvdo`, `vdo create --name=myvdo --device=/dev/sdb --vdoLogicalSize=20G`, `mkfs.xfs -K /dev/mapper/myvdo`, mount with `discard,defaults` options.",
+            ],
+            commands: [
+              { cmd: "lvcreate -l 100%FREE -n datalv corpvg", desc: "Use ALL remaining VG space" },
+              { cmd: "lvextend -l +100%FREE -r /dev/vg/lv", desc: "Extend LV by all free space + resize FS" },
+              { cmd: "xfs_growfs /mountpoint", desc: "Grow XFS filesystem (use mountpoint, not device)" },
+              { cmd: "mkswap /dev/vg/swaplv && swapon /dev/vg/swaplv", desc: "Create and activate swap" },
+              { cmd: "stratis pool create mypool /dev/sdb && stratis fs create mypool myfs", desc: "Stratis one-liner" },
+              { cmd: "lvreduce --resizefs -L 5G /dev/vg/lv", desc: "Shrink ext4 LV (dangerous, backup first!)" },
+            ],
+            labs: [
+              "TIMED LVM DRILL: From empty /dev/sdb, create: VG 'examvg', LV 'examdata' (8GB, xfs, mounted at /exam/data), LV 'examswap' (1GB, swap). Both persistent. Target: under 5 minutes.",
+              "EXTEND DRILL: extend /dev/examvg/examdata by 2GB. Verify the filesystem grew (df -h should show new size). Do NOT unmount during the operation.",
+              "STRATIS DRILL: add /dev/sdc as Stratis pool 'testpool'. Create filesystem 'testfs'. Mount at /stratis-data. Add a file. Verify pool shows usage.",
+              "FULL STORAGE SCENARIO: given task 'ensure /appdata is on LVM, xfs, 15GB, persists after reboot, and LVM VG named appvg'. Complete it from scratch.",
+              "WORST CASE DRILL: extend an LV that's mounted, running a database (simulate with a file being written by a script). Verify the extension happens with no data loss.",
+            ],
+            tip: "LVM tasks are almost always on the exam. The single most common mistake is forgetting to add the new mount to /etc/fstab. After every storage task, ALWAYS update fstab and test with `mount -a`.",
+          },
+          {
+            id: 6, title: "Services, Boot & Network", emoji: "🌐",
+            summary: [
+              "systemd service exam tasks: start service, enable to survive reboot, verify status. Always do BOTH start AND enable. `systemctl enable --now servicename` is the one-liner.",
+              "Service troubleshooting flow: `systemctl status service` → `journalctl -xe -u service` → fix config → `systemctl daemon-reload` → `systemctl restart service` → verify.",
+              "nmcli exam pattern: `nmcli con mod 'name' ipv4.addresses X.X.X.X/X ipv4.gateway X.X.X.X ipv4.dns X.X.X.X ipv4.method manual && nmcli con up 'name'`. Get connection name first with `nmcli con show`.",
+              "firewalld + SELinux for services: non-standard ports need BOTH firewalld port and SELinux port type. Standard services just need firewalld service. Know which is which.",
+              "Boot troubleshooting: if system won't boot to target — check for failed units (`systemctl --failed`), fstab errors (boot with emergency target, check fstab), filesystem errors (e2fsck, xfs_repair).",
+              "Network team/bond: `nmcli con add type team con-name team0 ifname team0 config '...'`. For HA networking. Know the concept even if not always tested.",
+            ],
+            commands: [
+              { cmd: "systemctl enable --now httpd && systemctl status httpd", desc: "Enable, start, verify in sequence" },
+              { cmd: "nmcli con show | grep -v unmanaged", desc: "List managed network connections" },
+              { cmd: "nmcli con mod 'Wired connection 1' ipv4.method manual ipv4.addresses 10.0.0.10/24 ipv4.gateway 10.0.0.1 ipv4.dns 8.8.8.8", desc: "Configure static IP" },
+              { cmd: "nmcli con down eth0 && nmcli con up eth0", desc: "Cycle connection to apply changes" },
+              { cmd: "firewall-cmd --add-service=http --add-service=https --permanent && firewall-cmd --reload", desc: "Allow web services in one command" },
+              { cmd: "journalctl -u httpd.service --since '5 min ago'", desc: "Recent httpd log entries" },
+            ],
+            labs: [
+              "SERVICE SCENARIO: Install and configure httpd. Change its port to 8443. Update SELinux for port 8443. Update firewalld. Verify accessible.",
+              "NETWORK SCENARIO: given VM with DHCP, convert to static IP 192.168.100.50/24, GW 192.168.100.1, DNS 192.168.100.1. Ensure it persists after reboot.",
+              "BOOT RECOVERY: deliberately corrupt fstab with a bad entry. Reboot. Fix from emergency/rescue mode. Return to normal boot.",
+              "ROOT PASSWORD RESET: reset root password on VM2 from scratch using rd.break. Time yourself — aim for under 4 minutes.",
+              "COMBINED SCENARIO: on VM2, configure: static IP, install and start httpd, allow http/https through firewall, set SELinux to allow httpd from /webdata context, make all persistent.",
+            ],
+            tip: "When configuring services that use non-default ports, you need THREE things: (1) service config change, (2) firewalld port open, (3) SELinux port type. Miss any one and it won't work.",
+          },
+          {
+            id: 7, title: "Full Mock Exam Scenarios", emoji: "📝",
+            summary: [
+              "MOCK EXAM 1 TASKS: (1) Reset root password, (2) Set hostname server1.example.com, (3) Static IP config, (4) Create users alice/bob with specific UIDs and groups, (5) Configure sudo for a group, (6) Fix SELinux issue with httpd, (7) Extend an LV.",
+              "MOCK EXAM 2 TASKS: (1) Configure NFS server and client mounts, (2) Set up autofs, (3) Create and configure swap space, (4) Set ACLs on shared directory, (5) Configure firewalld for specific services, (6) Create cron job, (7) Set tuned profile.",
+              "MOCK EXAM 3 TASKS: (1) Create LVM with exact requirements, (2) Add user with password aging, (3) Configure SSH key auth, (4) SELinux: fix boolean and port context, (5) Configure time sync (chrony), (6) Schedule a task with at, (7) Resize LV online.",
+              "Time targets: each mock exam should be completable in under 2 hours. If you need 3+ hours for mock exams, you need more practice on slow areas.",
+              "Self-scoring: reboot the VMs after each mock exam and verify every task persists. Tasks that only work until reboot score ZERO on the real exam.",
+              "Common point losses: not testing persistence (reboot!), not verifying as the actual user, SELinux disabled instead of fixed, firewalld not reloaded, fstab not updated.",
+            ],
+            commands: [
+              { cmd: "id alice && su - alice -c 'sudo -l'", desc: "Verify user and sudo config" },
+              { cmd: "df -h && lvs && vgs", desc: "Verify storage configuration" },
+              { cmd: "firewall-cmd --list-all && getenforce", desc: "Verify security config" },
+              { cmd: "systemctl is-enabled httpd && systemctl is-active httpd", desc: "Verify service persistence" },
+              { cmd: "mount | grep /data && grep /data /etc/fstab", desc: "Verify mount persistence" },
+            ],
+            labs: [
+              "FULL MOCK 1 (2 hours): hostname, static IP, users, sudo, ACLs, LVM extension, cron job, httpd with SELinux. Grade yourself after rebooting.",
+              "FULL MOCK 2 (2 hours): root password reset, NFS server+client, autofs, firewalld rich rules, stratis storage, user password policies, service management.",
+              "SPEED ROUND (30 min): create 5 users with different requirements, set up 2 LVs, configure firewalld, fix a broken service. Under time pressure.",
+              "TROUBLESHOOTING ROUND: receive a 'broken' VM (5 pre-configured problems). Find and fix each one. Problems: wrong file permissions, SELinux context, failed service, fstab error, wrong sudo config.",
+              "REBOOT TEST: after every mock exam, REBOOT and verify: IPs still correct, services running, mounts still mounted, ACLs still in place, cron jobs listed, firewall rules present.",
+            ],
+            tip: "The real exam checks persistence by rebooting your VMs at the end. EVERY task must be done correctly in config files, not just applied live. Reboot your practice VMs constantly.",
+          },
+        ],
+      },
+    };
+
+    function RHCSAMaster() {
+      const [activeCourse, setActiveCourse] = useState("rh124");
+      const [activeChapter, setActiveChapter] = useState(0);
+      const [activeTab, setActiveTab] = useState("summary");
+      const [sidebarOpen, setSidebarOpen] = useState(true);
+
+      const course = courses[activeCourse];
+      const chapter = course.chapters[activeChapter];
+
+      const switchCourse = (key) => {
+        setActiveCourse(key);
+        setActiveChapter(0);
+        setActiveTab("summary");
+      };
+
+      return (
+        <div style={{ fontFamily: "'Courier New', monospace", background: "#080808", minHeight: "100vh", color: "#ddd", display: "flex", flexDirection: "column", height: "100vh" }}>
+          {/* TOP BAR */}
+          <div style={{ background: "#0e0e0e", borderBottom: "1px solid #1a1a1a", padding: "0 24px", display: "flex", alignItems: "center", gap: "0", height: "56px", flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginRight: "32px" }}>
+              <span style={{ fontSize: "22px" }}>🎓</span>
+              <div>
+                <div style={{ fontSize: "13px", fontWeight: "bold", color: "#fff", letterSpacing: "1px" }}>RHCSA Master Guide</div>
+                <div style={{ fontSize: "9px", color: "#555", letterSpacing: "2px", textTransform: "uppercase" }}>EX200 Complete Study System</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "4px" }}>
+              {Object.entries(courses).map(([key, c]) => (
+                <button key={key} onClick={() => switchCourse(key)} style={{
+                  background: activeCourse === key ? c.color : "transparent",
+                  border: `1px solid ${activeCourse === key ? c.color : "#2a2a2a"}`,
+                  color: activeCourse === key ? "#fff" : "#666",
+                  padding: "6px 16px", borderRadius: "4px", cursor: "pointer",
+                  fontSize: "12px", fontWeight: "bold", letterSpacing: "1px",
+                  fontFamily: "inherit", transition: "all 0.15s",
+                }}>
+                  {c.label}
+                </button>
+              ))}
+            </div>
+            <div style={{ marginLeft: "auto", fontSize: "12px", color: "#444" }}>
+              {course.chapters.length} chapters · 3hr exam
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+            {/* SIDEBAR */}
+            <div style={{ width: sidebarOpen ? "220px" : "44px", minWidth: sidebarOpen ? "220px" : "44px", background: "#0c0c0c", borderRight: "1px solid #1a1a1a", display: "flex", flexDirection: "column", transition: "all 0.2s", overflow: "hidden" }}>
+              <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: "transparent", border: "none", color: "#444", padding: "8px", cursor: "pointer", fontSize: "16px", textAlign: "right", flexShrink: 0 }}>
+                {sidebarOpen ? "◀" : "▶"}
+              </button>
+              {sidebarOpen && (
+                <div style={{ overflowY: "auto", flex: 1 }}>
+                  <div style={{ padding: "4px 12px 8px", fontSize: "9px", letterSpacing: "3px", color: "#333", textTransform: "uppercase" }}>{course.label} — {course.chapters.length} Chapters</div>
+                  {course.chapters.map((ch, i) => (
+                    <button key={ch.id} onClick={() => { setActiveChapter(i); setActiveTab("summary"); }} style={{
+                      width: "100%", textAlign: "left", background: activeChapter === i ? course.bg : "transparent",
+                      border: "none", borderLeft: activeChapter === i ? `2px solid ${course.color}` : "2px solid transparent",
+                      padding: "9px 12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px",
+                      color: activeChapter === i ? "#fff" : "#555", transition: "all 0.1s",
+                    }}>
+                      <span style={{ fontSize: "14px", flexShrink: 0 }}>{ch.emoji}</span>
+                      <div style={{ fontSize: "11px", lineHeight: "1.3" }}>
+                        <div style={{ color: activeChapter === i ? course.accent : "#333", fontSize: "9px", letterSpacing: "1px" }}>CH.{ch.id}</div>
+                        {ch.title}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* MAIN CONTENT */}
+            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+              <div style={{ background: course.bg, borderBottom: `1px solid ${course.color}22`, padding: "20px 28px", flexShrink: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                  <span style={{ fontSize: "36px" }}>{chapter.emoji}</span>
+                  <div>
+                    <div style={{ fontSize: "10px", letterSpacing: "3px", color: course.accent, textTransform: "uppercase" }}>
+                      {course.label} · Chapter {chapter.id} of {course.chapters.length}
+                    </div>
+                    <div style={{ fontSize: "20px", fontWeight: "bold", color: "#fff", marginTop: "2px" }}>{chapter.title}</div>
+                  </div>
+                  <div style={{ marginLeft: "auto" }}>
+                    <div style={{ background: course.color + "22", border: `1px solid ${course.color}44`, color: course.accent, fontSize: "10px", padding: "4px 10px", borderRadius: "3px", letterSpacing: "1px" }}>
+                      {course.title}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div style={{ background: "#0e0e0e", borderBottom: "1px solid #1a1a1a", padding: "0 28px", flexShrink: 0, display: "flex" }}>
+                {["summary", "commands", "labs"].map(tab => (
+                  <button key={tab} onClick={() => setActiveTab(tab)} style={{
+                    background: "transparent", border: "none", cursor: "pointer", fontFamily: "inherit",
+                    padding: "12px 20px", fontSize: "11px", letterSpacing: "2px", textTransform: "uppercase",
+                    color: activeTab === tab ? course.color : "#444",
+                    borderBottom: activeTab === tab ? `2px solid ${course.color}` : "2px solid transparent",
+                    marginBottom: "-1px", fontWeight: "bold", transition: "all 0.1s",
+                  }}>
+                    {tab === "summary" ? "📖 Summary" : tab === "commands" ? "⌨️ Commands" : "🧪 Labs"}
+                  </button>
+                ))}
+                <div style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
+                  <span style={{ fontSize: "10px", color: "#333", letterSpacing: "2px" }}>
+                    {activeTab === "summary" ? `${chapter.summary.length} KEY CONCEPTS` : activeTab === "commands" ? `${chapter.commands.length} COMMANDS` : `${chapter.labs.length} LAB TASKS`}
+                  </span>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div style={{ padding: "20px 28px", flex: 1 }}>
+                {activeTab === "summary" && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    {chapter.summary.map((point, i) => (
+                      <div key={i} style={{ background: "#111", border: "1px solid #1a1a1a", borderLeft: `3px solid ${course.color}`, borderRadius: "4px", padding: "14px 18px", display: "flex", gap: "12px" }}>
+                        <div style={{ background: course.color, color: "#fff", borderRadius: "3px", width: "20px", height: "20px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", fontWeight: "bold", flexShrink: 0, marginTop: "1px" }}>{i + 1}</div>
+                        <div style={{ fontSize: "13px", lineHeight: "1.75", color: "#bbb" }}>{point}</div>
+                      </div>
+                    ))}
+                    {chapter.tip && (
+                      <div style={{ background: "#0a1200", border: `1px solid ${course.color}33`, borderRadius: "4px", padding: "14px 18px", marginTop: "6px" }}>
+                        <div style={{ fontSize: "9px", letterSpacing: "3px", color: course.accent, textTransform: "uppercase", marginBottom: "8px" }}>💡 Exam Tip</div>
+                        <div style={{ fontSize: "13px", lineHeight: "1.7", color: "#9b9" }}>{chapter.tip}</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "commands" && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div style={{ fontSize: "11px", color: "#444", marginBottom: "4px", letterSpacing: "1px" }}>Memorize these. The exam allows man pages but not a slow lookup — you need to KNOW these.</div>
+                    {chapter.commands.map((item, i) => (
+                      <div key={i} style={{ background: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: "4px", padding: "12px 16px", display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                        <code style={{ background: "#0d1200", border: `1px solid ${course.color}33`, color: "#ffe066", padding: "6px 12px", borderRadius: "3px", fontSize: "12px", whiteSpace: "pre-wrap", flexShrink: 0, display: "block", maxWidth: "60%" }}>
+                          {item.cmd}
+                        </code>
+                        <div style={{ fontSize: "12px", color: "#777", paddingTop: "8px" }}>→ {item.desc}</div>
+                      </div>
+                    ))}
+                    <div style={{ background: "#0a0a14", border: "1px solid #1a1a33", borderRadius: "4px", padding: "12px 16px", marginTop: "6px" }}>
+                      <span style={{ fontSize: "10px", color: "#556", letterSpacing: "2px", textTransform: "uppercase" }}>📚 Remember: </span>
+                      <span style={{ fontSize: "12px", color: "#667" }}>man pages + `--help` are available on exam. Use / to search within man, n for next result.</span>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "labs" && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ fontSize: "11px", color: "#444", marginBottom: "4px", letterSpacing: "1px" }}>Do these on a live RHEL system. Read the task, close this tab, do it from memory. Then verify.</div>
+                    {chapter.labs.map((lab, i) => (
+                      <div key={i} style={{ background: "#0a1200", border: "1px solid #1a2500", borderLeft: "3px solid #3a7a00", borderRadius: "4px", padding: "14px 16px" }}>
+                        <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                          <div style={{ background: "#1a4000", color: "#8aea44", borderRadius: "3px", width: "22px", height: "22px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "bold", flexShrink: 0 }}>
+                            {i + 1}
+                          </div>
+                          <div style={{ fontSize: "13px", lineHeight: "1.7", color: "#9bb" }}>{lab}</div>
+                        </div>
+                      </div>
+                    ))}
+                    <div style={{ background: "#100800", border: "1px solid #2a1500", borderRadius: "4px", padding: "14px 16px", marginTop: "4px" }}>
+                      <div style={{ fontSize: "9px", letterSpacing: "3px", color: "#a60", textTransform: "uppercase", marginBottom: "8px" }}>⚠️ After EVERY Lab Session</div>
+                      {["Reboot the VM and verify everything persists", "Test by logging in AS the configured user", "Break it intentionally, then fix it again", "Try doing the whole thing from memory (no notes)"].map((r, i) => (
+                        <div key={i} style={{ fontSize: "12px", color: "#986", display: "flex", gap: "8px", marginBottom: "4px" }}>
+                          <span style={{ color: "#c60" }}>▶</span>{r}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* BOTTOM NAV */}
+          <div style={{ background: "#0c0c0c", borderTop: "1px solid #1a1a1a", padding: "8px 24px", display: "flex", alignItems: "center", gap: "16px", flexShrink: 0 }}>
+            <button onClick={() => { if (activeChapter > 0) { setActiveChapter(activeChapter - 1); setActiveTab("summary"); } }} style={{ background: "transparent", border: "1px solid #222", color: "#555", padding: "4px 12px", borderRadius: "3px", cursor: "pointer", fontSize: "11px", fontFamily: "inherit" }}>
+              ← Prev
+            </button>
+            <div style={{ flex: 1, background: "#1a1a1a", borderRadius: "2px", height: "4px" }}>
+              <div style={{ height: "100%", background: course.color, width: `${((activeChapter + 1) / course.chapters.length) * 100}%`, borderRadius: "2px", transition: "width 0.3s" }} />
+            </div>
+            <span style={{ fontSize: "10px", color: "#444", letterSpacing: "1px", minWidth: "100px", textAlign: "center" }}>
+              {activeChapter + 1} / {course.chapters.length} chapters
+            </span>
+            <div style={{ flex: 1, background: "#1a1a1a", borderRadius: "2px", height: "4px" }} />
+            <button onClick={() => { if (activeChapter < course.chapters.length - 1) { setActiveChapter(activeChapter + 1); setActiveTab("summary"); } }} style={{ background: "transparent", border: "1px solid #222", color: "#555", padding: "4px 12px", borderRadius: "3px", cursor: "pointer", fontSize: "11px", fontFamily: "inherit" }}>
+              Next →
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<RHCSAMaster />);
+  </script>
+
+</body>
+</html>
